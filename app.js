@@ -1,5 +1,5 @@
 'use strict';
-// Piano Cottage v4: YAMNet sound-event classification. No loudness-based fallback.
+// Piano Cottage v5: YAMNet sound-event classification. No loudness-based fallback.
 const $ = id => document.getElementById(id);
 const FIVE_SECONDS = 5000;
 let windowSamples = 15600; // adjust to actual iPhone AudioContext sample rate
@@ -70,9 +70,15 @@ async function loadClassifier(){
   const errors=[];
   for(const lib of LIBS){
     try {
-      $('detectValue').textContent='正在加载钢琴识别 AI…';
+      $('detectValue').textContent='正在加载 Safari 兼容版钢琴 AI…';
       const mp=await import(lib.module);
-      const fileset=await mp.FilesetResolver.forAudioTasks(lib.wasm);
+      // Safari may support basic SIMD but reject relaxed-SIMD instructions in the
+      // default MediaPipe WASM binary. Explicitly select the portable no-SIMD
+      // build instead of relying on MediaPipe's basic-SIMD feature test.
+      const fileset={
+        wasmLoaderPath: lib.wasm + '/audio_wasm_nosimd_internal.js',
+        wasmBinaryPath: lib.wasm + '/audio_wasm_nosimd_internal.wasm'
+      };
       classifier=await mp.AudioClassifier.createFromOptions(fileset,{baseOptions:{modelAssetPath:MODEL},maxResults:-1,scoreThreshold:0});
       return classifier;
     } catch(e) {
@@ -101,7 +107,7 @@ async function start(){
     samples=[];sampleCount=0;lastPiano=0;listening=true;active=false;
     node.onaudioprocess=onAudio;
     $('start').textContent='■ 停止监听';$('detectValue').textContent='AI 已启动，等待钢琴';
-    $('aiDetail').textContent='仅 Piano 类别计时；说话不计时';$('message').textContent='';
+    $('aiDetail').textContent='钢琴 AI v5 · Safari 兼容模式（仅 Piano 计时）';$('message').textContent='';
     setState('idle','请弹奏钢琴，AI 正在分辨钢琴声和人声');
     raf=requestAnimationFrame(uiLoop);
   }catch(e){await stop();$('message').textContent='无法启动钢琴 AI：'+(e.message||String(e))+'。请保持联网并在 Safari 重新打开。'}
