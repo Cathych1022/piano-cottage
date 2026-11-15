@@ -1,6 +1,6 @@
 // Piano Cottage v7 offline shell. AI assets require first-time network access.
-const CACHE='piano-cottage-v9';
-const ASSETS=['./','./index.html','./app.js','./v7.js','./v7.css','./storybook.css','./storybook.js','./cottage-scene.svg','./manifest.webmanifest','./icon.svg'];
+const CACHE='piano-cottage-v10';
+const ASSETS=['./','./index.html','./app.js','./v7.js','./v7.css','./storybook.css','./storybook.js','./cottage-scene.svg','./botanical-border.svg','./cat-star.svg','./manifest.webmanifest','./icon.svg'];
 self.addEventListener('install',event=>{
  event.waitUntil(caches.open(CACHE).then(cache=>cache.addAll(ASSETS)).then(()=>self.skipWaiting()));
 });
