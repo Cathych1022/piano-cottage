@@ -15,7 +15,7 @@ const minutes=ms=>Math.floor(ms/60000);
 const displayTime=ms=>minutes(ms)>=60?Math.floor(minutes(ms)/60)+'小时'+minutes(ms)%60+'分':minutes(ms)+'分钟';
 const id=()=>('p'+Date.now().toString(36)+Math.random().toString(36).slice(2,9));
 const safeName=s=>String(s||'').trim().replace(/[\u0000-\u001f]/g,'').slice(0,24);
-const safeGoal=(v,fallback)=>Number.isFinite(Number(v))?Math.min(360,Math.max(1,Math.round(Number(v)))):fallback;
+const safeGoal=(v,fallback,max=360)=>Number.isFinite(Number(v))?Math.min(max,Math.max(1,Math.round(Number(v)))):fallback;
 const number=n=>Number.isFinite(Number(n))?Math.min(Number(n),86400000):0;
 const emptyProfile=(name,avatar)=>({id:id(),name:safeName(name)||'我的练琴',avatar:AVATARS.includes(avatar)?avatar:'🐱',dailyGoal:20,weeklyGoal:120,history:{}});
 function validHistory(h){
@@ -32,7 +32,7 @@ function validated(raw){
   const pid=String(p.id||'');
   if(!/^p[a-zA-Z0-9_-]{5,45}$/.test(pid)||used.has(pid))throw Error('备份存在重复或无效用户 ID');
   used.add(pid);
-  return {id:pid,name:safeName(p.name),avatar:AVATARS.includes(p.avatar)?p.avatar:'🐱',dailyGoal:safeGoal(p.dailyGoal,20),weeklyGoal:safeGoal(p.weeklyGoal,120),history:validHistory(p.history)};
+  return {id:pid,name:safeName(p.name),avatar:AVATARS.includes(p.avatar)?p.avatar:'🐱',dailyGoal:safeGoal(p.dailyGoal,20),weeklyGoal:safeGoal(p.weeklyGoal,120,3000),history:validHistory(p.history)};
  });
  return {version:7,profiles,activeId:used.has(raw.activeId)?raw.activeId:profiles[0].id};
 }
@@ -48,7 +48,7 @@ function persist(){try{localStorage.setItem(KEY,JSON.stringify(state));return tr
 function current(){return state.profiles.find(p=>p.id===state.activeId)||state.profiles[0]}
 function refresh(){render();const s=$('profileName');if(s)s.textContent=current().name;const a=$('profileAvatar');if(a)a.textContent=current().avatar}
 function notify(message){const n=$('v7notice');if(n){n.textContent=message;n.hidden=false;}}
-function changeActive(target){if(!state.profiles.some(p=>p.id===target))return;state.activeId=target;persist();refresh()}
+function changeActive(target){if(!state.profiles.some(p=>p.id===target))return;state.activeId=target;selectedDay='';weekOffset=0;monthOffset=0;persist();refresh()}
 function addProfile(name,avatar){
  if(state.profiles.length>=30)throw Error('最多支持 30 个用户');
  const p=emptyProfile(name,avatar);if(!safeName(name))throw Error('请输入姓名');
@@ -59,14 +59,14 @@ function updateProfile(profileId,fields){
  if(fields.name!==undefined){if(!safeName(fields.name))throw Error('姓名不能为空');p.name=safeName(fields.name)}
  if(fields.avatar!==undefined&&AVATARS.includes(fields.avatar))p.avatar=fields.avatar;
  if(fields.dailyGoal!==undefined)p.dailyGoal=safeGoal(fields.dailyGoal,20);
- if(fields.weeklyGoal!==undefined)p.weeklyGoal=safeGoal(fields.weeklyGoal,120);
+ if(fields.weeklyGoal!==undefined)p.weeklyGoal=safeGoal(fields.weeklyGoal,120,3000);
  persist();refresh();
 }
 function removeProfile(profileId){
  if(state.profiles.length===1)throw Error('至少保留一个用户');
  state.profiles=state.profiles.filter(p=>p.id!==profileId);
  if(state.activeId===profileId)state.activeId=state.profiles[0].id;
- persist();refresh();
+ selectedDay='';weekOffset=0;monthOffset=0;persist();refresh();
 }
 function restore(json){const next=validated(json);state=next;persist();weekOffset=0;monthOffset=0;refresh();}
 function startOfWeek(offset){return shift(monday(new Date()),offset*7)}
@@ -157,7 +157,7 @@ function initUI(){
  dialog.innerHTML='<h3>🐱 练琴者管理</h3><div id="v7profiles"></div><label for="v7name">姓名</label><input id="v7name" maxlength="24" placeholder="例如：Elly"><div class="v7-avatars" id="v7avatars"></div><div class="v7-dialog-actions"><button id="v7saveProfile" type="button">保存当前用户</button><button id="v7addProfile" type="button">＋ 新建用户</button></div><button id="v7deleteProfile" class="v7-danger" type="button">删除当前用户及其记录</button><button id="v7closeProfile" type="button">完成</button>';
  document.body.append(dialog);
  const goals=document.createElement('dialog');goals.className='v7-dialog';goals.id='v7goalsDialog';
- goals.innerHTML='<h3>🎯 设置练琴目标</h3><label for="v7dailyInput">每日目标（分钟）</label><input type="number" id="v7dailyInput" min="1" max="360" step="1"><label for="v7weeklyInput">每周目标（分钟）</label><input type="number" id="v7weeklyInput" min="1" max="360" step="1"><p class="v7-help">每天达到每日目标获得 ⭐。连续练琴天数按有钢琴练习记录的自然日计算。</p><div class="v7-dialog-actions"><button id="v7saveGoal" type="button">保存目标</button><button id="v7closeGoal" type="button">取消</button></div>';
+ goals.innerHTML='<h3>🎯 设置练琴目标</h3><label for="v7dailyInput">每日目标（分钟）</label><input type="number" id="v7dailyInput" min="1" max="360" step="1"><label for="v7weeklyInput">每周目标（分钟）</label><input type="number" id="v7weeklyInput" min="1" max="3000" step="1"><p class="v7-help">每天达到每日目标获得 ⭐。连续练琴天数按有钢琴练习记录的自然日计算。</p><div class="v7-dialog-actions"><button id="v7saveGoal" type="button">保存目标</button><button id="v7closeGoal" type="button">取消</button></div>';
  document.body.append(goals);
  let selectedAvatar=current().avatar;
  function paintProfiles(){
@@ -179,7 +179,7 @@ function initUI(){
  $('v7deleteProfile').onclick=async()=>{if(state.profiles.length===1){notify('至少保留一个用户');return}const p=current();if(!confirm('永久删除「'+p.name+'」及其全部练琴记录？建议先导出备份。'))return;await window.PianoSession.stopListening();removeProfile(p.id);await window.PianoSession.refreshProfile();paintProfiles();notify('用户已删除')};
  $('v7goalButton').onclick=()=>{$('v7dailyInput').value=current().dailyGoal;$('v7weeklyInput').value=current().weeklyGoal;goals.showModal()};
  $('v7closeGoal').onclick=()=>goals.close();
- $('v7saveGoal').onclick=()=>{const daily=Number($('v7dailyInput').value),weekly=Number($('v7weeklyInput').value);if(!Number.isInteger(daily)||daily<1||daily>360||!Number.isInteger(weekly)||weekly<1||weekly>360){notify('目标需为 1–360 分钟的整数');return}updateProfile(current().id,{dailyGoal:daily,weeklyGoal:weekly});goals.close();notify('目标已保存')};
+ $('v7saveGoal').onclick=()=>{const daily=Number($('v7dailyInput').value),weekly=Number($('v7weeklyInput').value);if(!Number.isInteger(daily)||daily<1||daily>360||!Number.isInteger(weekly)||weekly<1||weekly>3000){notify('每日目标需为 1–360 分钟，每周目标需为 1–3000 分钟');return}updateProfile(current().id,{dailyGoal:daily,weeklyGoal:weekly});goals.close();notify('目标已保存')};
  $('v7weekBack').onclick=()=>{weekOffset=Math.max(-104,weekOffset-1);render()};
  $('v7weekForward').onclick=()=>{weekOffset=Math.min(0,weekOffset+1);render()};
  $('v7monthBack').onclick=()=>{monthOffset=Math.max(-120,monthOffset-1);selectedDay='';render()};
