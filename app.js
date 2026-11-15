@@ -22,7 +22,7 @@ function short(ms){const m=Math.floor(ms/60000);return m>=60?`${Math.floor(m/60)
 function updateStats(){ $('timer').textContent=format(accumulated);$('today').textContent=short(history[dayKey()]||0);let sum=0;for(let i=0;i<7;i++){const d=new Date();d.setDate(d.getDate()-i);const k=`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;sum+=history[k]||0}$('week').textContent=short(sum)}
 function setState(kind,info){const st=$('status');st.className='status '+(kind==='active'?'active':kind==='paused'?'paused':'');st.textContent=kind==='active'?'♫ 识别到钢琴':kind==='paused'?'Ⅱ 已暂停':'♪ 等待钢琴声音';$('hint').textContent=info;$('wave').classList.toggle('live',kind==='active')}
 for(let i=0;i<17;i++){const b=document.createElement('i');b.style.setProperty('--h',`${9+Math.round(Math.abs(8-i)*1.6)}px`);b.style.setProperty('--delay',`${i*.05}s`);$('wave').append(b)}
-const meter=document.createElement('div');meter.id='micDiagnostic';meter.style.cssText='margin-top:12px;font-size:12px;line-height:1.7;color:#795640';meter.innerHTML='<div>🎙 麦克风 <span id="micValue">0%</span> · <span id="detectValue">AI v8 未加载</span></div><div style="height:8px;border-radius:8px;background:#dec7a3;overflow:hidden;margin:4px auto;max-width:240px"><div id="micBar" style="height:100%;width:0%;background:#6f9b77;transition:width .12s"></div></div><div id="aiDetail" aria-live="polite">AI v8 · 只统计确认的钢琴片段</div>';
+const meter=document.createElement('div');meter.id='micDiagnostic';meter.style.cssText='margin-top:12px;font-size:12px;line-height:1.7;color:#795640';meter.innerHTML='<div>🎙 麦克风 <span id="micValue">0%</span> · <span id="detectValue">AI 未加载</span></div><div style="height:8px;border-radius:8px;background:#dec7a3;overflow:hidden;margin:4px auto;max-width:240px"><div id="micBar" style="height:100%;width:0%;background:#6f9b77;transition:width .12s"></div></div><div id="aiDetail" aria-live="polite">AI 检测 · 只统计确认的钢琴片段</div>';
 $('countdown').insertAdjacentElement('afterend',meter);
 function labelScore(categories, token){return Math.max(0,...categories.filter(c=>(c.categoryName||c.displayName||'').toLowerCase().includes(token)).map(c=>Number(c.score)||0))}
 function inspectAudio(block){
@@ -126,8 +126,8 @@ async function start(){
     if(ctx.state!=='running')await ctx.resume();
     samples=[];sampleCount=0;lastPiano=0;lastStrongPiano=0;smoothedPiano=0;recentPianoFrames=0;lastAudioEnergy=0;inspectedWindows=0;listening=true;active=false;
     node.onaudioprocess=onAudio;
-    $('start').textContent='■ 停止监听';$('detectValue').textContent='AI v8 已启动，等待钢琴';
-    $('aiDetail').textContent='钢琴 AI v8 · Safari 兼容模式（仅 Piano 计时）';$('message').textContent='';
+    $('start').textContent='■ 停止监听';$('detectValue').textContent='AI 已启动，等待钢琴';
+    $('aiDetail').textContent='钢琴 AI 检测 · Safari 兼容模式（仅 Piano 计时）';$('message').textContent='';
     setState('idle','请弹奏钢琴，AI 正在分辨钢琴声和人声');
     raf=requestAnimationFrame(uiLoop);
   }catch(e){await stop();$('message').textContent='无法启动钢琴 AI：'+(e.message||String(e))+'。请保持联网并在 Safari 重新打开。'}
