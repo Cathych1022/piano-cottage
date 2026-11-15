@@ -1,5 +1,5 @@
 'use strict';
-/* Piano Cottage v9: illustrated three-screen UI. Existing timer, P7 IDs and data
+/* Piano Cottage v10: illustrated three-screen UI. Existing timer, P7 IDs and data
  remain untouched. Tabs move existing nodes, preserving all event handlers. */
 (function(){
 const $=id=>document.getElementById(id);
@@ -21,6 +21,8 @@ const footer=root.querySelector('.footerkeys');
 const create=(tag,cls,html)=>{const e=document.createElement(tag);if(cls)e.className=cls;if(html!==undefined)e.innerHTML=html;return e;};
 header.before(create('div','sb-floating-leaves','<span>✿</span><span>❀</span><span>✧</span><span>🌿</span>'));
 header.after(create('p','sb-tagline','聆听 · 记录 · 陪伴每一次练琴时光'));
+const versionChip=create('span','sb-version-chip','🐾 童话版 v10');
+header.querySelector('.title').after(versionChip);
 const screens=create('div','sb-screens');
 const practice=create('section','sb-screen sb-practice');practice.id='sb-practice';practice.setAttribute('aria-label','练琴');
 const weekly=create('section','sb-screen sb-weekly');weekly.id='sb-weekly';weekly.setAttribute('aria-label','本周统计');
@@ -102,7 +104,7 @@ const show=next=>{
   b.classList.toggle('selected',on);b.setAttribute('aria-current',on?'page':'false');
  });
  root.dataset.page=page;
- window.scrollTo({top:0,behavior:'instant'});
+ window.scrollTo(0,0);
  refreshMembers();
 };
 nav.addEventListener('click',e=>{const b=e.target.closest('button[data-page]');if(b)show(b.dataset.page)});
