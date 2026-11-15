@@ -1,10 +1,13 @@
 'use strict';
-// Piano Cottage v3: YAMNet sound-event classification. No loudness-based fallback.
+// Piano Cottage v4: YAMNet sound-event classification. No loudness-based fallback.
 const $ = id => document.getElementById(id);
 const FIVE_SECONDS = 5000;
 let windowSamples = 15600; // adjust to actual iPhone AudioContext sample rate
 const MODEL = 'https://storage.googleapis.com/mediapipe-models/audio_classifier/yamnet/float32/1/yamnet.tflite';
-const CDN = 'https://cdn.jsdelivr.net/npm/@mediapipe/tasks-audio@0.10.22';
+const LIBS = [
+  { module: 'https://cdn.jsdelivr.net/npm/@mediapipe/tasks-audio@1.2.3/audio_bundle.mjs', wasm: 'https://cdn.jsdelivr.net/npm/@mediapipe/tasks-audio@1.2.3/wasm' },
+  { module: 'https://unpkg.com/@mediapipe/tasks-audio@1.2.3/audio_bundle.mjs', wasm: 'https://unpkg.com/@mediapipe/tasks-audio@1.2.3/wasm' }
+];
 const dbKey = 'storybook-piano-practice-v1';
 let ctx=null, stream=null, source=null, node=null, silentGain=null, classifier=null;
 let listening=false, active=false, initializing=false, generation=0, raf=0;
@@ -64,10 +67,19 @@ function uiLoop(t){if(!listening)return;if(active&&t-lastPiano>=FIVE_SECONDS){ac
 async function loadClassifier(){
   if(classifier)return classifier;
   $('detectValue').textContent='正在下载钢琴识别 AI…';
-  const mp=await import(CDN+'/+esm');
-  const fileset=await mp.FilesetResolver.forAudioTasks(CDN+'/wasm');
-  classifier=await mp.AudioClassifier.createFromOptions(fileset,{baseOptions:{modelAssetPath:MODEL},maxResults:-1,scoreThreshold:0});
-  return classifier;
+  const errors=[];
+  for(const lib of LIBS){
+    try {
+      $('detectValue').textContent='正在加载钢琴识别 AI…';
+      const mp=await import(lib.module);
+      const fileset=await mp.FilesetResolver.forAudioTasks(lib.wasm);
+      classifier=await mp.AudioClassifier.createFromOptions(fileset,{baseOptions:{modelAssetPath:MODEL},maxResults:-1,scoreThreshold:0});
+      return classifier;
+    } catch(e) {
+      errors.push(new URL(lib.module).hostname+': '+(e?.message||String(e)));
+    }
+  }
+  throw new Error('AI 模块加载失败（两条线路均失败）。'+errors.join('；'));
 }
 async function start(){
   if(listening||initializing)return;
