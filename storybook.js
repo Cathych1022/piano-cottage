@@ -69,6 +69,7 @@ root.append(stageKeys);
 for(let i=0;i<15;i++){const k=create('i','sb-white-key');if([0,1,3,4,5].includes(i%7))k.classList.add('with-black');stageKeys.append(k)}
 // Existing summary remains available on Weekly, with unchanged data bindings.
 weekly.append(summary);
+board.remove(); // All existing v7 sections are now in their respective tabs.
 if(footer)footer.remove();
 const refreshMembers=()=>{
  const p=window.P7.current();
