@@ -139,7 +139,7 @@ function initUI(){
  const header=document.querySelector('.header'),summary=document.querySelector('.summary');
  if(!header||!summary)return;
  const profile=document.createElement('div');profile.className='v7-profile';
- profile.innerHTML='<button id="v7profileButton" class="v7-profile-button" type="button"><span id="profileAvatar">🐱</span><span><small>当前练琴者</small><strong id="profileName">我的练琴</strong></span><span>⌄</span></button><span class="v7-version">Piano Cottage · v7</span>';
+ profile.innerHTML='<button id="v7profileButton" class="v7-profile-button" type="button"><span id="profileAvatar">🐱</span><span><small>当前练琴者</small><strong id="profileName">我的练琴</strong></span><span>⌄</span></button><span class="v7-version">Piano Cottage · v8</span>';
  header.insertAdjacentElement('afterend',profile);
  const panel=document.createElement('section');panel.className='v7-board';
  panel.innerHTML='<div class="v7-board-heading">🌿 练琴成长日记</div>'+
