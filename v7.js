@@ -184,7 +184,7 @@ function initUI(){
  '<div id="v7notice" class="v7-notice" hidden></div>';
  summary.insertAdjacentElement('afterend',panel);
  const dialog=document.createElement('dialog');dialog.className='v7-dialog';dialog.id='v7dialog';
- dialog.innerHTML='<h3>🐱 练琴者管理</h3><div id="v7profiles"></div><label for="v7name">姓名</label><input id="v7name" maxlength="24" placeholder="例如：Elly"><div class="photo-picker"><span id="v7photoPreview" class="portrait" aria-hidden="true"></span><div><button id="v7choosePhoto" type="button">从照片选择</button><p>自动居中裁剪，仅保存在本机。</p></div><input type="file" id="v7photoFile" accept="image/*" hidden></div><p id="v7photoStatus" class="photo-status" role="status"></p><div class="v7-avatars" id="v7avatars"></div><div class="v7-dialog-actions"><button id="v7saveProfile" type="button">保存当前用户</button><button id="v7addProfile" type="button">＋ 新建用户</button></div><button id="v7deleteProfile" class="v7-danger" type="button">删除当前用户及其记录</button><button id="v7closeProfile" type="button">完成</button>';
+ dialog.innerHTML='<h3>🐱 练琴者管理</h3><div id="v7profiles"></div><label for="v7name">姓名</label><input id="v7name" maxlength="24" placeholder="例如：Elly"><div class="photo-picker"><span id="v7photoPreview" class="portrait" aria-hidden="true"></span><div><button id="v7choosePhoto" type="button">从照片选择</button><p>自动居中裁剪，仅保存在本机。</p></div><input type="file" id="v7photoFile" accept="image/*" hidden></div><p id="v7photoStatus" class="photo-status" role="status"></p><div class="v7-avatars" id="v7avatars"></div><div class="v7-dialog-actions"><button id="v7saveProfile" type="button">保存当前用户</button><button id="v7addProfile" type="button">＋ 新建用户</button></div><button id="v7deleteProfile" class="v7-danger" type="button">删除当前用户及其记录</button><div class="v7-profile-footer"><button id="v7cancelProfile" type="button">取消</button><button id="v7closeProfile" type="button">完成</button></div>';
  document.body.append(dialog);
  const goals=document.createElement('dialog');goals.className='v7-dialog';goals.id='v7goalsDialog';
  goals.innerHTML='<h3>🎯 设置练琴目标</h3><label for="v7dailyInput">每日目标（分钟）</label><input type="number" id="v7dailyInput" min="1" max="360" step="1"><label for="v7weeklyInput">每周目标（分钟）</label><input type="number" id="v7weeklyInput" min="1" max="3000" step="1"><p class="v7-help">每天达到每日目标获得 ⭐。连续练琴天数按有钢琴练习记录的自然日计算。</p><div class="v7-dialog-actions"><button id="v7saveGoal" type="button">保存目标</button><button id="v7closeGoal" type="button">取消</button></div>';
@@ -222,7 +222,7 @@ function initUI(){
  $('v7photoFile').onchange=async e=>{
   const file=e.target.files?.[0];if(!file)return;
   const request=++photoRequest;photoLoading=request;let objectURL;
-  $('v7photoStatus').textContent='正在准备头像…';$('v7saveProfile').disabled=true;$('v7addProfile').disabled=true;
+  $('v7photoStatus').textContent='正在准备头像…';$('v7saveProfile').disabled=true;$('v7addProfile').disabled=true;$('v7closeProfile').disabled=true;
   try{
    if(file.size>20*1024*1024)throw Error('照片过大，请选择小于 20MB 的图片');
    objectURL=URL.createObjectURL(file);const img=new Image();
@@ -236,13 +236,19 @@ function initUI(){
    if(photo.length>60000)photo=canvas.toDataURL('image/jpeg',.55);
    if(!safePhoto(photo))throw Error('无法读取图片，请选择 JPG、PNG 或 WebP 图片');
    if(request!==photoRequest)return;
-   selectedPhoto=photo;paintAvatarSelection();$('v7photoStatus').textContent='照片已准备好，保存后生效。选择卡通头像可替换照片。';
+   selectedPhoto=photo;paintAvatarSelection();$('v7photoStatus').textContent='照片已准备好，点击“完成”即可保存。';
   }catch(err){if(request===photoRequest)$('v7photoStatus').textContent=err.message;}
-  finally{if(objectURL)URL.revokeObjectURL(objectURL);e.target.value='';if(photoLoading===request){photoLoading=0;$('v7saveProfile').disabled=false;$('v7addProfile').disabled=false;}}
+  finally{if(objectURL)URL.revokeObjectURL(objectURL);e.target.value='';if(photoLoading===request){photoLoading=0;$('v7saveProfile').disabled=false;$('v7addProfile').disabled=false;$('v7closeProfile').disabled=false;}}
  };
  $('v7profileButton').onclick=()=>{paintProfiles();dialog.showModal()};
- $('v7closeProfile').onclick=()=>dialog.close();dialog.addEventListener('close',()=>{photoRequest++;});
- $('v7saveProfile').onclick=()=>{try{updateProfile(current().id,{name:$('v7name').value,avatar:selectedAvatar,avatarPhoto:selectedPhoto});paintProfiles();$('v7photoStatus').textContent='用户资料已保存';notify('用户资料已保存')}catch(e){$('v7photoStatus').textContent=e.message}};
+ function saveProfileDraft(closeAfterSave=false){
+  if(photoLoading)return;
+  try{updateProfile(current().id,{name:$('v7name').value,avatar:selectedAvatar,avatarPhoto:selectedPhoto});paintProfiles();$('v7photoStatus').textContent='用户资料已保存';notify('用户资料已保存');if(closeAfterSave)dialog.close();}
+  catch(e){$('v7photoStatus').textContent=e.message;}
+ }
+ $('v7closeProfile').onclick=()=>saveProfileDraft(true);
+ $('v7cancelProfile').onclick=()=>dialog.close();dialog.addEventListener('close',()=>{photoRequest++;});
+ $('v7saveProfile').onclick=()=>saveProfileDraft();
  $('v7addProfile').onclick=async()=>{try{const name=safeName($('v7name').value);if(!name)throw Error('请输入新用户名');await window.PianoSession.stopListening();const x=addProfile(name,selectedAvatar,selectedPhoto);await window.PianoSession.refreshProfile();paintProfiles();notify('已创建用户：'+x.name)}catch(e){$('v7photoStatus').textContent=e.message}};
  $('v7deleteProfile').onclick=async()=>{if(state.profiles.length===1){notify('至少保留一个用户');return}const p=current();if(!window.I18n.confirm('永久删除「'+p.name+'」及其全部练琴记录？建议先导出备份。'))return;await window.PianoSession.stopListening();removeProfile(p.id);await window.PianoSession.refreshProfile();paintProfiles();notify('用户已删除')};
  $('v7goalButton').onclick=()=>{$('v7dailyInput').value=current().dailyGoal;$('v7weeklyInput').value=current().weeklyGoal;goals.showModal()};

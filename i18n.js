@@ -52,6 +52,7 @@
     '男孩':'Boy','女孩':'Girl','小猫':'Kitten','小狗':'Puppy','独角兽':'Unicorn',
     '从照片选择':'Choose a photo','更换照片':'Change photo','自动居中裁剪，仅保存在本机。':'Centered crop. Stored only on this device.',
     '正在准备头像…':'Preparing your avatar…','照片已准备好，保存后生效。选择卡通头像可替换照片。':'Photo ready. Save to use it, or choose a cartoon avatar to replace it.',
+    '照片已准备好，点击“完成”即可保存。':'Photo ready. Tap Done to save it.',
     '照片过大，请选择小于 20MB 的图片':'Choose an image smaller than 20 MB.',
     '无法读取图片，请选择 JPG、PNG 或 WebP 图片':'Could not read this image. Choose a JPG, PNG or WebP image.',
     '保存失败，存储空间不足，请先导出备份':'Could not save: storage is full. Export a backup first.',
