@@ -32,6 +32,9 @@
    const summary=document.createElement('summary');
    summary.innerHTML='<span class="sb-diagnostic-title">🎙 AI 钢琴识别</span><span id="sb-ai-state">等待监听</span><span class="sb-ai-chevron" aria-hidden="true">⌄</span>';
    details.append(summary,meter);
+   // Local microphone privacy message belongs in the optional diagnostics panel.
+   const privacy=root.querySelector('.sb-practice>.privacy');
+   if(privacy)details.append(privacy);
    countdown.after(details);
    // Keep the existing live diagnostics; only change their presentation.
    const status=$('detectValue');
