@@ -46,7 +46,7 @@ function inspectAudio(block){
   smoothedPiano=inspectedWindows===1?piano:(smoothedPiano*.55+piano*.45);
   const speechDominant=speech>=.28 && speech>piano*1.4;
   const strongPiano=piano>=threshold && piano>=speech*.85 && !speechDominant;
-  const inPianoRun=active && now-lastStrongPiano<4000 && now-lastPiano<FIVE_SECONDS;
+  const inPianoRun=active && now-lastPiano<FIVE_SECONDS;
   const softPiano=inPianoRun && piano>=Math.max(.018,threshold*.35)
       && piano>=speech*.65 && !speechDominant && lastAudioEnergy>.003;
   const isPiano=strongPiano || softPiano;
