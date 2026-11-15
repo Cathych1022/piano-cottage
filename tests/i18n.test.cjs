@@ -20,6 +20,9 @@ test('practice quantities and calendar dates retain their values',()=>{
   assert.equal(t('2026年11月'),'Nov 2026');
   assert.equal(t('11月9日 — 11月15日'),'Nov 9 – Nov 15');
   assert.equal(t('2026-11-15 · 22分钟 · 达成目标 ⭐'),'2026-11-15 · 22 min · Goal reached ⭐');
+  assert.equal(t('11月15日 · 18 分钟 · 今日练琴'),'Nov 15 · 18 min · Today’s practice');
+  assert.equal(t('11月13日 · 22 分钟 · 达成目标 ⭐'),'Nov 13 · 22 min · Goal reached ⭐');
+  assert.equal(t('11月8日 · 0 分钟'),'Nov 8 · 0 min');
 });
 test('audio scores and pause timing remain accurate when localized',()=>{
   const {t}=locale('en');

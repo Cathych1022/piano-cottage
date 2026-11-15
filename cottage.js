@@ -75,7 +75,7 @@
     const track=el('div','goal-track');const percent=el('span','goal-percent');percent.id=prefix+'Percent';track.append(progress,percent);
     row.append(line,track);goals.append(row);
   }
-  $('v7goalButton').textContent='调整练琴目标';goals.append($('v7goalButton'));
+  $('v7goalButton').innerHTML=icon('edit')+'<span>调整练琴目标</span>';goals.append($('v7goalButton'));
   const chart=el('div','parchment chart-card','<h2>本周练琴时长</h2>');
   $('v7weekBack').textContent='‹';$('v7weekBack').setAttribute('aria-label','上一周');
   $('v7weekForward').textContent='›';$('v7weekForward').setAttribute('aria-label','下一周');
@@ -83,15 +83,17 @@
   plot.append(axis,$('v7weekly'));chart.append(weekNav,plot);
   const rewards=board.querySelector('.v7-achievements');rewards.classList.add('reward-cards');
   rewards.children[0].firstChild.textContent='星星奖励';rewards.children[1].firstChild.textContent='连续练琴';
+  rewards.children[0].classList.add('stars-card');rewards.children[1].classList.add('streak-card');
   rewards.children[0].prepend(el('span','reward-icon',icon('star')));rewards.children[1].prepend(el('span','reward-icon',icon('calendar')));
   const starRow=el('div','star-row');starRow.id='starRow';rewards.children[0].append(starRow);
   const totals=el('div','parchment week-totals');
   const total=el('div','',icon('clock')+'<span>本周总时长</span>');total.append($('v7weekTotal'));
   const compare=el('div','',icon('trend')+'<span>比上周</span>');compare.append($('v7weekCompare'));totals.append(total,compare);
   const goalsCat=el('div','cat-sprite goals-cat');goalsCat.setAttribute('aria-hidden','true');goals.prepend(goalsCat);
-  pages.weekly.append(goals,chart,rewards,totals,$('v7rewardText'));
+  pages.weekly.append(goals,chart,rewards,totals);
   const footer=()=>{const n=el('div','garden-footer');n.setAttribute('aria-hidden','true');return n;};
-  const weeklyFooter=footer();weeklyFooter.classList.add('weekly-footer');weeklyFooter.append(el('div','cat-sprite star-cat'));pages.weekly.append(weeklyFooter);
+  const weeklyFooter=footer();weeklyFooter.classList.add('weekly-footer');
+  weeklyFooter.removeAttribute('aria-hidden');weeklyFooter.append($('v7rewardText'));pages.weekly.append(weeklyFooter);
 
   const family=el('div','parchment family-card','<div class="family-heading"><div id="memberAvatar" class="portrait large"></div><div class="family-info"><button type="button" id="editName"><strong id="memberName"></strong>'+icon('edit')+'</button><small id="practiceDays"></small></div><button type="button" id="switchMember" class="small-button">切换用户⌄</button></div><div class="member-row" id="members"></div>');
   const calendar=el('div','parchment calendar-card');
@@ -102,7 +104,9 @@
   $('v7export').innerHTML=icon('upload')+'导出备份';$('v7importButton').innerHTML=icon('restore')+'恢复备份';
   const backup=board.querySelector('.v7-backup');
   const help=el('p','backup-note','练琴记录保存在此设备，备份让回忆安心留存。');
-  pages.mine.append(family,calendar,backup,help,footer());
+  calendar.append(backup);
+  const mineFooter=footer();mineFooter.classList.add('mine-footer');mineFooter.removeAttribute('aria-hidden');mineFooter.append(help);
+  pages.mine.append(family,calendar,mineFooter);
   root.append($('v7notice'));
   const originalSummary=root.querySelector('.summary');originalSummary.hidden=true;root.append(originalSummary);
   board.remove();root.querySelector('.footerkeys')?.remove();
@@ -125,13 +129,11 @@
   let memberSignature='';
   function refreshDecorations(){
     const p=window.P7.current();
-    $('memberName').textContent=p.name;$('memberAvatar').textContent=p.avatar;
-    $('memberAvatar').dataset.avatar=p.avatar;$('profileAvatar').dataset.avatar=p.avatar;
+    $('memberName').textContent=p.name;window.P7.applyAvatar($('memberAvatar'),p);window.P7.applyAvatar($('profileAvatar'),p);
     const days=Object.values(p.history).filter(ms=>ms>0).length;
     $('practiceDays').textContent='已练琴 '+days+' 天';
-    const chartValues=Array.from($('v7weekly').querySelectorAll('.v7-bar-value'),n=>Number.parseInt(n.textContent,10)||0);
-    const chartMax=Math.max(p.dailyGoal,...chartValues,1);
-    $('chartAxis').replaceChildren(...Array.from({length:5},(_,i)=>{const n=el('span');n.textContent=Math.round(chartMax*(4-i)/4)+' 分';return n;}));
+    const chartMax=Number($('v7weekly').dataset.max)||p.dailyGoal;
+    $('chartAxis').replaceChildren(...Array.from({length:5},(_,i)=>{const n=el('span');n.style.setProperty('--tick',i);n.textContent=Math.round(chartMax*(4-i)/4)+' 分';return n;}));
     const detail=$('v7dayDetail');
     if(window.I18n.sourceText(detail).startsWith('点击日历') && window.I18n.sourceText($('v7monthTitle'))===new Date().getFullYear()+'年'+(new Date().getMonth()+1)+'月'){
       const now=new Date(),ms=p.history[window.P7.dateKey(now)]||0;
@@ -146,12 +148,14 @@
     $('starRow').innerHTML=Array.from({length:5},(_,i)=>'<span class="'+(i<Math.min(5,starCount)?'earned':'')+'">'+icon('star')+'</span>').join('');
     $('starRow').setAttribute('aria-hidden','true');
     let profiles=[];try{profiles=JSON.parse(localStorage.getItem('piano-cottage-v7-data')||'{}').profiles||[];}catch{}
-    const signature=JSON.stringify(profiles.map(x=>[x.id,x.name,x.avatar]))+p.id;
+    const signature=JSON.stringify(profiles.map(x=>[x.id,x.name,x.avatar,x.avatarPhoto]))+p.id;
     if(signature!==memberSignature){
       memberSignature=signature;const members=$('members');members.replaceChildren();
+      // Keep the active player and the add control reachable with many profiles.
+      profiles.sort((a,b)=>(b.id===p.id)-(a.id===p.id));
       for(const person of profiles){
         const b=el('button','member'+(person.id===p.id?' selected':''));b.type='button';b.setAttribute('aria-label','切换到'+person.name);b.setAttribute('aria-pressed',String(person.id===p.id));
-        const av=el('span','portrait');av.textContent=person.avatar;av.dataset.avatar=person.avatar;const name=el('span','member-name');name.textContent=person.name;name.dataset.userContent='';b.append(av,name);
+        const av=el('span','portrait');window.P7.applyAvatar(av,person);const name=el('span','member-name');name.textContent=person.name;name.dataset.userContent='';b.append(av,name);
         b.onclick=async()=>{await window.PianoSession.switchTo(person.id);refreshDecorations();};members.append(b);
       }
       const add=el('button','member add-member','<span class="portrait">＋</span><span class="member-name">添加用户</span>');add.type='button';add.onclick=()=>{editProfile();$('v7name').value='';$('v7name').focus();};members.append(add);

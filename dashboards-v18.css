@@ -1,0 +1,150 @@
+/* Watercolor dashboards. Scoped to the two journal pages so the approved
+   practice screen and the full-height safe-area shell remain unchanged. */
+.app:is([data-page=weekly],[data-page=mine]) {
+  background-image: linear-gradient(transparent 0 17%,#f8e8c780 35%,#f8e8c7 64%),url('assets/garden-watercolor.png');
+  background-size: 100% 100%,100% auto;
+  background-position: center top;
+}
+.weekly,.mine { display:flex; flex-direction:column; gap:9px; min-height:100%; padding-bottom:0; }
+.weekly { padding-top:36px; }
+.mine { padding-top:8px; }
+:is(.weekly,.mine) > * { flex-shrink:0; }
+:is(.weekly,.mine) .parchment,.reward-cards>div {
+  isolation:isolate; border:0; background:none; box-shadow:none; border-radius:22px;
+}
+:is(.weekly,.mine) .parchment:before,.reward-cards>div:before {
+  content:''; position:absolute; inset:0; z-index:-1; pointer-events:none;
+  border:22px solid transparent;
+  border-image:url('assets/botanical-paper-v18.webp') 165 fill / 34px / 0 stretch;
+}
+.goals-card { padding:8px 15px; }
+.goal-row { border-radius:16px; padding:6px 9px 7px; background:linear-gradient(110deg,#fff9e59c,#fff8e541); box-shadow:inset 0 1px #fffaf0b5,0 2px 3px #b78b4820; }
+.goal-row+.goal-row { margin-top:5px; border:0; padding-top:6px; }
+.goal-line { gap:7px; }
+.goal-line>.icon { width:26px; height:26px; }
+.goal-line strong { font-size:18px; }
+.goal-line>span { font:18px var(--body-font); }
+.goal-track { margin:3px 0 0 33px; gap:8px; }
+.v7-progress { height:10px; }
+.goal-percent { width:29px; font-size:12px; color:#795736; }
+#v7goalButton { position:absolute; top:-35px; left:4px; display:flex; align-items:center; gap:4px; min-height:32px; margin:0; padding:2px 9px; font:12px var(--body-font); color:#6b542f; background:#fff7e4cf; border:1px solid #d0b17c8a; border-radius:18px; }
+#v7goalButton .icon { width:13px; height:13px; }
+.goals-cat { width:82px; height:55px; right:15px; top:-42px; background:url('assets/peeking-kitten-v18.webp') center / contain no-repeat; }
+.chart-card { margin:0; padding:10px 19px 8px; }
+.chart-card h2 { margin:0; font-size:21px; line-height:1.2; }
+.chart-card .v7-week-nav { margin:0 4px; }
+.chart-card .v7-week-nav strong { font-size:12px; color:#8a6d45; }
+.chart-card .v7-week-nav button { min-height:30px; min-width:38px; font-size:26px; }
+.chart-plot { --plot-height:111px; position:relative; margin:4px 0 0; gap:6px; }
+.chart-axis { position:relative; width:34px; height:calc(var(--plot-height) - 22px); padding:0; font-size:11px; }
+.chart-axis span { position:absolute; top:calc(var(--tick) * 25%); transform:translateY(-50%); white-space:nowrap; }
+.chart-plot .v7-chart { height:var(--plot-height); margin:0; padding:0; gap:6px; background:none; position:relative; }
+.chart-plot .v7-chart:before { content:''; position:absolute; inset:0 0 22px; background:repeating-linear-gradient(to top,#b99a5b44 0 1px,transparent 1px 25%); pointer-events:none; }
+.v7-bar-col { position:relative; gap:0; }
+.v7-bar-value { position:absolute; width:1px; height:1px; overflow:hidden; clip-path:inset(50%); }
+.v7-bar-holder { border-color:#c2a471; min-height:0; }
+.v7-bar { width:78%; max-width:29px; min-height:0; border-width:1px; background-image:linear-gradient(#82ae6bce,#cbd19f99),url('assets/garden-watercolor.png'); background-size:100% 100%,450px auto; background-position:center,center 40%; }
+.v7-bar.met { background-image:linear-gradient(#6d9c50c4,#b2ca7d91),url('assets/garden-watercolor.png'); }
+.v7-bar-col:nth-child(6) .v7-bar,.v7-bar-col:nth-child(7) .v7-bar { background-image:linear-gradient(#689f8ccc,#bdd2b991),url('assets/garden-watercolor.png'); }
+.v7-day-label { height:22px; line-height:22px; padding:0; font:15px/22px var(--body-font); }
+.v7-bar.empty { border:0; }
+.reward-cards { margin:0; gap:8px; }
+.reward-cards>div { position:relative; padding:9px 5px 8px; font-size:18px; }
+.reward-cards>div:before { border-image-width:25px; }
+.reward-icon .icon { width:20px; height:20px; margin-right:4px; }
+.stars-card { display:flex; flex-wrap:wrap; align-items:center; justify-content:center; }
+.stars-card #v7stars { position:absolute; width:1px; height:1px; overflow:hidden; clip-path:inset(50%); }
+.star-row { flex-basis:100%; gap:2px; margin-top:5px; }
+.star-row .icon { width:26px; height:26px; stroke-width:1.4px; fill:#fff2d5; }
+.star-row .earned .icon { fill:#ffc954; stroke:#c88b25; filter:drop-shadow(0 1px 0 #fff9c2); }
+.reward-cards #v7streak { display:flex; align-items:center; justify-content:center; gap:10px; margin-top:0; font:32px/1.15 var(--body-font); }
+#v7streak:before,#v7streak:after { content:'❧'; color:#8fa357; font:26px Georgia; }
+#v7streak:after { transform:scaleX(-1); }
+.week-totals { margin:0; padding:9px 12px; }
+.week-totals>div { gap:0 5px; grid-template-columns:29px 1fr; }
+.week-totals>div+div { border-left:1px dashed #c6a875; }
+.week-totals span { font-size:12px; }
+.week-totals strong { font:28px/1.15 var(--body-font); }
+.week-totals #v7weekCompare { font:24px/1.25 var(--body-font); }
+.garden-footer.weekly-footer { flex:1 0 90px; height:auto; position:relative; margin:0 -14px; background:url('assets/weekly-garden-v18.webp') center bottom / 100% auto no-repeat; }
+.weekly-footer .v7-reward-note { position:relative; z-index:1; margin:0; padding:0 12px; font-size:11px; line-height:1.5; text-align:center; }
+.family-card { padding:6px 14px 4px; }
+.family-heading { gap:9px; padding:0 0 5px; }
+.family-heading .portrait.large { width:52px; height:52px; }
+#memberName { font-size:24px; font-weight:400; }
+.family-info small { font-size:12px; margin-top:3px; }
+.family-info small:before { font-size:18px; }
+.family-heading .small-button { padding:7px 9px; min-height:36px; font:13px var(--body-font); }
+.member-row { gap:6px; padding:4px 1px 1px; }
+.member { width:calc((100% - 18px)/4); min-width:60px; padding:2px 4px; gap:2px; border-radius:17px 17px 12px 12px; }
+.member .portrait { width:38px; height:38px; }
+.member-name { font-size:13px; line-height:18px; }
+.add-member { position:sticky; right:0; margin-left:auto; background:#fff3d8ed; }
+.add-member .portrait { border-color:#caae7d; font-size:29px; }
+.calendar-card { display:flex; flex-direction:column; margin:0; padding:8px 15px 10px; }
+.calendar-card .v7-week-nav { gap:7px; }
+.calendar-card .v7-week-nav strong { font:22px var(--body-font); }
+.calendar-card .v7-week-nav button { width:36px; height:36px; }
+.calendar-icon .icon { width:23px; height:23px; }
+.v7-calendar { margin:2px 0 0; gap:2px; }
+.v7-weekday { font:16px/22px var(--body-font); padding:0 0 4px; margin:0; }
+.v7-date { height:32px; font:17px var(--body-font); padding:0 0 7px; }
+.v7-date-mark { bottom:-1px; height:13px; line-height:13px; font-size:9px; }
+.v7-date.starred .v7-date-mark { font-size:14px; }
+.v7-date.selected { background:#e5ecc9; border-color:#93aa68; }
+.v7-date.today.selected { color:#fff9e1; background:linear-gradient(#a5be79,#7c9d55); }
+.v7-day-detail { margin:6px 0 0; min-height:34px; padding:6px 4px; font-size:13px; line-height:1.3; border-radius:14px; }
+.calendar-card .v7-backup { margin-top:9px; gap:9px; }
+.v7-backup button { min-height:44px; padding:7px 3px; font-size:18px; }
+.v7-backup .icon { width:22px; height:22px; }
+.mine .garden-footer.mine-footer { flex:1 0 100px; height:auto; margin:0 -14px; background:url('assets/sleeping-garden-v18.webp') center bottom / 100% auto no-repeat; mask-image:none; }
+.v7-notice { display:flex; align-items:center; gap:8px; }
+.v7-notice>span { flex:1; }
+.v7-notice>button { flex:none; border:0; background:transparent; width:32px; min-height:32px; border-radius:50%; font-size:24px; }
+.photo-avatar { background-size:cover!important; background-position:center!important; background-repeat:no-repeat!important; color:transparent!important; font-size:0!important; }
+.photo-picker { display:flex; gap:13px; align-items:center; margin-top:16px; padding:11px; border:1px solid #dcc18c; border-radius:19px; background:#fff8e7a8; }
+.photo-picker .portrait { width:64px; height:64px; }
+.photo-picker>div { flex:1; }
+.photo-picker #v7choosePhoto { min-height:40px; background:#e7edcf; border-color:#93ab68; color:#546c35; }
+.photo-picker p,.photo-status { font-size:12px; line-height:1.5; color:#84603d; margin:7px 0 0; }
+.photo-status:empty { display:none; }
+.photo-status { padding:5px 4px; }
+.mine-footer .backup-note { margin:0; padding:1px 21px 0; font-size:10px; color:#806241; }
+html:lang(en) :is(.weekly,.mine) .goal-line strong { font-size:21px; }
+html:lang(en) .goal-line>span { font-size:18px; }
+html:lang(en) .calendar-card .v7-week-nav strong { font-size:24px; }
+html:lang(en) .v7-day-detail { font-size:15px; }
+html:lang(en) .family-heading .small-button { font-size:16px; }
+html:lang(en) .reward-cards>div { font-size:21px; }
+html:lang(en) .weekly-footer .v7-reward-note { font-size:13px; }
+html:lang(en) .mine-footer .backup-note { font-size:12px; }
+@media (max-width:699px), (max-height:500px) {
+  .app:is([data-page=weekly],[data-page=mine]) { --side:12px; }
+  .weekly,.mine { gap:7px; }
+  .weekly { padding-top:43px; }
+  .mine { padding-top:7px; }
+  .garden-footer.weekly-footer,.mine .garden-footer.mine-footer { margin-left:calc(-1 * var(--side)); margin-right:calc(-1 * var(--side)); }
+}
+@media (min-width:700px) and (min-height:501px) {
+  .weekly,.mine { min-height:760px; }
+  .chart-plot { --plot-height:155px; }
+  .v7-date { height:41px; }
+  .garden-footer.weekly-footer,.mine .garden-footer.mine-footer { margin-left:-20px; margin-right:-20px; }
+}
+@media (max-width:360px) {
+  .goals-card { padding-left:10px; padding-right:10px; }
+  .goal-line strong { font-size:16px; }
+  .goal-line>span { font-size:16px; }
+  .goal-line>.icon { width:23px; height:23px; }
+  .goal-track { margin-left:30px; }
+  .family-heading { flex-wrap:wrap; gap:6px; }
+  .family-heading .portrait.large { width:53px; height:53px; }
+  .family-heading .small-button { font-size:11px; padding:7px; }
+  #memberName { font-size:21px; }
+  .family-info small { font-size:10px; }
+  .calendar-card { padding-left:11px; padding-right:11px; }
+  .member-name { font-size:12px; }
+  .reward-cards>div { font-size:16px; }
+  html:lang(en) :is(.weekly,.mine) .goal-line strong { font-size:19px; }
+  html:lang(en) .goal-line>span { font-size:16px; }
+}
