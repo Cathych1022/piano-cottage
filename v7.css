@@ -1,0 +1,48 @@
+/* Piano Cottage v7: cozy watercolor-inspired dashboard; no external fonts. */
+.v7-profile{position:relative;z-index:3;display:flex;align-items:center;justify-content:space-between;gap:10px;margin:-10px 2px 18px}
+.v7-profile-button{display:flex;align-items:center;gap:9px;min-width:0;text-align:left;padding:9px 13px;color:#5b3a2a;border:2px solid #bd9161;border-radius:20px;background:linear-gradient(125deg,#fff7dd,#f8e6bc);box-shadow:0 4px #97674349;font:inherit;cursor:pointer}
+.v7-profile-button>span:first-child{font-size:28px}.v7-profile-button span:nth-child(2){display:flex;flex-direction:column;min-width:0}.v7-profile-button strong{max-width:165px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.v7-profile-button small{font-size:11px;color:#826048}.v7-version{font-size:11px;font-weight:700;color:#795641;white-space:nowrap}
+.v7-board{position:relative;z-index:2;margin:20px 0 15px;border:2px solid #cba278;border-radius:26px;padding:17px 14px;background:linear-gradient(145deg,#fff4ddec,#fbe8c9eb);box-shadow:0 5px #986d4b36;color:#56382a}
+.v7-board-heading{text-align:center;font-size:21px;font-weight:800;margin:3px 0 18px}
+.v7-section-title{text-align:left;font-weight:800;font-size:17px;margin:24px 3px 12px;padding-bottom:9px;border-bottom:1px dashed #c49d74}
+.v7-goal-card{background:#fff9e9b8;border:1px solid #ddba87;border-radius:18px;padding:14px}
+.v7-row{display:flex;align-items:center;justify-content:space-between;gap:8px}.v7-row strong{font-size:14px}
+.v7-goal-card .v7-row:not(:first-child){margin-top:14px}
+.v7-goal-card .v7-row span{font-size:12px;font-weight:750;color:#806044}
+.v7-progress{height:11px;border-radius:30px;background:#e7d6b8;overflow:hidden;margin:9px 0 15px}
+.v7-progress i{height:100%;width:0;display:block;background:linear-gradient(90deg,#91b988,#679d75);border-radius:30px;transition:width .25s}
+.v7-text-button{background:transparent;border:0;color:#886044;text-decoration:underline;padding:7px 0 0;font:inherit;font-size:13px;font-weight:700;cursor:pointer}
+.v7-achievements{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:12px}
+.v7-achievements>div{padding:12px 8px;text-align:center;background:#f4e2bd;border-radius:16px;font-size:12px}
+.v7-achievements strong{display:block;font-size:23px;margin-top:5px}.v7-reward-note{text-align:center;font-size:12px;color:#87684f;margin:10px 0}
+.v7-week-nav{gap:5px}.v7-week-nav strong{font-size:12px;text-align:center}.v7-week-nav button,.v7-backup button{font:inherit;background:#fff6dc;border:1px solid #bb8e60;color:#67442e;border-radius:13px;padding:9px 8px;font-size:12px;cursor:pointer;touch-action:manipulation}.v7-week-nav button:disabled{opacity:.3;cursor:default}
+.v7-week-summary{display:flex;justify-content:space-between;align-items:baseline;gap:10px;font-size:12px;margin:16px 0 7px}.v7-week-summary strong{font-size:23px}.v7-week-summary span{color:#78624c}
+.v7-chart{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:4px;align-items:end;background:linear-gradient(to top,#ead9b8 1px,transparent 1px) bottom/100% 25%;padding:12px 4px 1px;border-radius:12px;height:190px}
+.v7-bar-col{min-width:0;display:flex;flex-direction:column;align-items:center;gap:5px;height:100%}
+.v7-bar-value{font-size:10px;color:#846449;white-space:nowrap}.v7-bar-holder{width:100%;height:132px;display:flex;justify-content:center;align-items:end;border-bottom:1px solid #bca489}
+.v7-bar{width:min(70%,32px);border-radius:7px 7px 2px 2px;background:linear-gradient(#9dbf95,#779d7c);min-height:2px;box-shadow:inset 2px 1px #ffffff48}
+.v7-bar.met{background:linear-gradient(#e5be76,#b98b4d)}.v7-day-label{font-size:12px;font-weight:700}
+.v7-calendar{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:5px;margin-top:13px}
+.v7-weekday{text-align:center;color:#8b6e51;font-size:12px;font-weight:800;padding:6px 0}
+.v7-date{position:relative;height:44px;min-width:0;border-radius:12px;border:1px solid #e2c99e;background:#fffaf0;color:#60432e;font:inherit;font-size:14px;font-weight:700;cursor:pointer}
+.v7-date.outside{opacity:.28}.v7-date.today{border:2px solid #7ca184}.v7-date.has-practice{background:#dcead3}
+.v7-date.starred{background:#f6dfac}.v7-date.selected{outline:2px solid #7c9572;outline-offset:1px}
+.v7-date:disabled{opacity:.32;cursor:default}.v7-date-mark{position:absolute;bottom:1px;left:0;right:0;font-size:9px;color:#658c6f}
+.v7-day-detail{text-align:center;font-size:12px;color:#6e5744;min-height:20px;margin-top:12px}
+.v7-help{font-size:12px;line-height:1.7;color:#765f4a}
+.v7-backup{display:grid;grid-template-columns:1fr 1fr;gap:9px}.v7-backup button{font-weight:700}
+.v7-notice{margin-top:12px;font-size:12px;line-height:1.6;background:#e2eed7;padding:9px 12px;border-radius:12px}
+.v7-dialog{width:min(92vw,460px);max-height:86dvh;overflow-y:auto;background:#fff2d8;color:#56382a;border:2px solid #b78659;border-radius:23px;padding:22px;box-shadow:0 12px 40px #3320164f}
+.v7-dialog::backdrop{background:#251e1780}.v7-dialog h3{margin-top:0}
+.v7-dialog label{display:block;font-size:13px;font-weight:700;margin:14px 0 6px}
+.v7-dialog input:not([type=file]){width:100%;border:1px solid #c5a17b;border-radius:10px;padding:11px 12px;background:#fffdf3;color:#56382a;font-size:16px}
+.v7-dialog button{font:inherit;border:1px solid #b78962;background:#fff4d6;padding:10px 12px;border-radius:12px;color:#62422e;cursor:pointer}
+.v7-dialog-actions{display:flex;gap:9px;margin:15px 0}.v7-dialog-actions button{flex:1;background:#d9e9ca;font-size:13px;font-weight:700}
+.v7-dialog #v7closeProfile{display:block;width:100%;margin-top:13px}.v7-dialog .v7-danger{width:100%;font-size:12px;color:#9a4437;background:#fff0e1}
+#v7profiles{display:flex;gap:7px;flex-wrap:wrap;max-height:125px;overflow:auto;margin-bottom:11px}
+#v7profiles .v7-user-choice{font-size:12px;padding:7px 10px}
+#v7profiles .selected{background:#dceccf;border-color:#6a9779}
+.v7-avatars{display:flex;flex-wrap:wrap;gap:5px}
+.v7-avatars .v7-avatar{font-size:22px;padding:6px 7px;border:2px solid transparent}
+.v7-avatars .selected{border-color:#759e77;background:#e5efdb}
+@media(max-width:375px){.v7-board{padding:13px 9px}.v7-profile-button strong{max-width:110px}.v7-week-nav button{font-size:10px;padding:7px 4px}.v7-date{height:39px;font-size:12px}.v7-calendar{gap:3px}}
