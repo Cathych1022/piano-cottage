@@ -87,8 +87,8 @@ function render(){
  const p=current(), today=dateKey(new Date()), w=startOfWeek(weekOffset);
  const todayMinutes=(p.history[today]||0)/60000, currentWeek=startOfWeek(0), thisWeek=weekTotal(p,currentWeek)/60000;
  $('profileName').textContent=p.name;$('profileAvatar').textContent=p.avatar;
- $('v7todayGoal').textContent=displayTime(p.history[today]||0)+' / '+p.dailyGoal+'分钟';
- $('v7weekGoal').textContent=displayTime(weekTotal(p,currentWeek))+' / '+p.weeklyGoal+'分钟';
+ $('v7todayGoal').textContent=minutes(p.history[today]||0)+' / '+p.dailyGoal+' 分钟';
+ $('v7weekGoal').textContent=minutes(weekTotal(p,currentWeek))+' / '+p.weeklyGoal+' 分钟';
  $('v7dailyProgress').style.width=progress(todayMinutes,p.dailyGoal)+'%';
  $('v7weeklyProgress').style.width=progress(thisWeek,p.weeklyGoal)+'%';
  $('v7stars').textContent=stars(p)+' ⭐';
@@ -96,7 +96,7 @@ function render(){
  const total=weekTotal(p,w),prev=weekTotal(p,shift(w,-7));
  $('v7weekTitle').textContent=(w.getMonth()+1)+'月'+w.getDate()+'日 — '+(shift(w,6).getMonth()+1)+'月'+shift(w,6).getDate()+'日';
  $('v7weekTotal').textContent=displayTime(total);
- $('v7weekCompare').textContent='对比前一周 '+(prev===0?(total>0?'首次记录':'暂无变化'):(total>=prev?'+':'')+Math.round((total-prev)/prev*100)+'%');
+ $('v7weekCompare').textContent=prev===0?(total>0?'首次记录':'暂无变化'):(total>=prev?'+':'')+Math.round((total-prev)/prev*100)+'%';
  $('v7weekBack').disabled=weekOffset<=-104;
  $('v7weekForward').disabled=weekOffset>=0;
  const chart=$('v7weekly');clear(chart);
