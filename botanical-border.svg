@@ -1,0 +1,29 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 420 1080" preserveAspectRatio="xMidYMin slice" aria-hidden="true">
+<defs>
+ <radialGradient id="leaf"><stop stop-color="#a1ba83"/><stop offset=".9" stop-color="#67895b"/><stop offset="1" stop-color="#557750"/></radialGradient>
+ <radialGradient id="petal"><stop stop-color="#fff9e7"/><stop offset=".7" stop-color="#f8e7ce"/><stop offset="1" stop-color="#e4bca6"/></radialGradient>
+ <radialGradient id="pink"><stop stop-color="#ffe5cf"/><stop offset="1" stop-color="#eaa998"/></radialGradient>
+ <radialGradient id="gold"><stop stop-color="#ffecac"/><stop offset="1" stop-color="#daaa67"/></radialGradient>
+ <filter id="paper"><feTurbulence type="fractalNoise" baseFrequency=".065" numOctaves="3" seed="4" stitchTiles="stitch"/><feColorMatrix type="saturate" values="0"/><feComponentTransfer><feFuncA type="linear" slope=".12"/></feComponentTransfer></filter>
+ <g id="flower"><g fill="url(#petal)" stroke="#dba989" stroke-opacity=".5" stroke-width=".6">
+ <ellipse cx="0" cy="-12" rx="8" ry="13"/><ellipse cx="11.5" cy="-4" rx="8" ry="13" transform="rotate(70 11.5 -4)"/><ellipse cx="8" cy="10" rx="8" ry="13" transform="rotate(140 8 10)"/><ellipse cx="-8" cy="10" rx="8" ry="13" transform="rotate(220 -8 10)"/><ellipse cx="-11.5" cy="-4" rx="8" ry="13" transform="rotate(290 -11.5 -4)"/>
+ </g><circle r="6.5" fill="url(#gold)"/><circle cx="-2" cy="-1" r="1" fill="#a77c46"/></g>
+ <g id="blossom"><g fill="url(#pink)"><ellipse cx="0" cy="-10" rx="7.3" ry="12"/><ellipse cx="10" cy="-2" rx="7.3" ry="12" transform="rotate(70 10 -2)"/><ellipse cx="6" cy="10" rx="7.3" ry="12" transform="rotate(145 6 10)"/><ellipse cx="-7" cy="9" rx="7.3" ry="12" transform="rotate(215 -7 9)"/><ellipse cx="-10" cy="-3" rx="7.3" ry="12" transform="rotate(288 -10 -3)"/></g><circle r="5" fill="#e4b775"/></g>
+ <g id="l"><ellipse rx="25" ry="9" fill="url(#leaf)" transform="rotate(-22)"/><path d="M-21 9Q2 -3 23 -8" fill="none" stroke="#b8c499" stroke-opacity=".65" stroke-width="1.4"/></g>
+</defs>
+<g opacity=".9">
+ <path d="M-40 -9Q75 30 48 106T31 223M440-23Q337 59 398 149T377 282" fill="none" stroke="#69865f" stroke-width="9" stroke-linecap="round"/>
+ <path d="M-28 43Q62 53 107 101M29 162Q79 140 128 147M389 102Q325 88 290 120M397 189Q340 197 311 237" fill="none" stroke="#728f64" stroke-width="4.5" stroke-linecap="round"/>
+ <use href="#l" transform="translate(40 37) rotate(50) scale(1.1)"/><use href="#l" transform="translate(68 66) rotate(-16) scale(.86)"/><use href="#l" transform="translate(18 106) rotate(64)"/><use href="#l" transform="translate(78 97) rotate(132)"/><use href="#l" transform="translate(35 173) rotate(6) scale(.9)"/><use href="#l" transform="translate(109 139) rotate(30) scale(.8)"/>
+ <use href="#l" transform="translate(378 41) rotate(142)"/><use href="#l" transform="translate(339 69) rotate(22)"/><use href="#l" transform="translate(399 113) rotate(45)"/><use href="#l" transform="translate(321 128) rotate(12) scale(.75)"/><use href="#l" transform="translate(363 185) rotate(125)"/><use href="#l" transform="translate(322 225) rotate(80) scale(.85)"/>
+ <use href="#flower" transform="translate(50 84) scale(.95)"/><use href="#flower" transform="translate(100 120) scale(.8)"/><use href="#blossom" transform="translate(18 199) scale(.85)"/><use href="#flower" transform="translate(370 94) scale(1.05)"/><use href="#blossom" transform="translate(335 174) scale(.9)"/><use href="#flower" transform="translate(390 227) scale(.7)"/>
+</g>
+<g opacity=".9">
+ <path d="M-30 1105Q82 995 30 915T43 791M450 1090Q320 1016 389 925T377 797" fill="none" stroke="#718b62" stroke-width="8" stroke-linecap="round"/>
+ <path d="M13 1009Q82 985 118 1023M41 902Q85 889 102 853M380 989Q321 950 292 968M374 852Q328 837 297 818" fill="none" stroke="#718b62" stroke-width="4" stroke-linecap="round"/>
+ <use href="#l" transform="translate(40 1027) rotate(37)"/><use href="#l" transform="translate(82 995) rotate(135) scale(.8)"/><use href="#l" transform="translate(42 923) rotate(-31)"/><use href="#l" transform="translate(78 871) rotate(30)"/><use href="#l" transform="translate(23 821) rotate(122) scale(.8)"/>
+ <use href="#l" transform="translate(381 1012) rotate(140)"/><use href="#l" transform="translate(320 972) rotate(16)"/><use href="#l" transform="translate(390 921) rotate(36)"/><use href="#l" transform="translate(343 837) rotate(98)"/>
+ <use href="#flower" transform="translate(43 968) scale(1.2)"/><use href="#blossom" transform="translate(99 1032) scale(.98)"/><use href="#flower" transform="translate(35 824) scale(.75)"/><use href="#flower" transform="translate(375 962) scale(.93)"/><use href="#blossom" transform="translate(332 844) scale(.92)"/><use href="#flower" transform="translate(382 1049) scale(.77)"/>
+</g>
+<g fill="#f5e3ba" opacity=".65"><circle cx="129" cy="55" r="3"/><circle cx="260" cy="34" r="3"/><circle cx="350" cy="328" r="4"/><circle cx="53" cy="654" r="3"/><circle cx="392" cy="735" r="4"/><circle cx="151" cy="1004" r="3"/><circle cx="265" cy="999" r="2"/></g>
+</svg>
