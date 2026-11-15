@@ -1,0 +1,77 @@
+name: Build iPhone app
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [ios-app]
+    paths:
+      - '**.js'
+      - '**.mjs'
+      - '**.cjs'
+      - '**.css'
+      - 'index.html'
+      - 'assets/**'
+      - 'icon.svg'
+      - 'ios/**'
+      - 'package*.json'
+      - 'capacitor.config.json'
+      - '.github/workflows/ios-build.yml'
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ios-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  package:
+    runs-on: macos-26
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
+        with:
+          node-version: 24
+          cache: npm
+      - name: Install dependencies
+        run: npm ci --no-fund
+      - name: Package interface and check behavior
+        run: |
+          npm run build
+          npm test
+          npx cap sync ios
+      - name: Build for iPhone without signing credentials
+        run: |
+          set -o pipefail
+          xcodebuild -version
+          xcodebuild -project ios/App/App.xcodeproj -scheme App \
+            -configuration Release -sdk iphoneos -destination 'generic/platform=iOS' \
+            -derivedDataPath build/DerivedData \
+            CODE_SIGNING_ALLOWED=NO CODE_SIGNING_REQUIRED=NO CODE_SIGN_IDENTITY='' \
+            CURRENT_PROJECT_VERSION="$GITHUB_RUN_NUMBER" build | tee build-xcode.log
+      - name: Package unsigned IPA for personal signing
+        run: |
+          set -euo pipefail
+          mkdir -p build/package/Payload build/artifacts
+          ditto build/DerivedData/Build/Products/Release-iphoneos/App.app build/package/Payload/App.app
+          test -f build/package/Payload/App.app/PrivacyInfo.xcprivacy
+          test -f build/package/Payload/App.app/public/native-bridge.js
+          /usr/libexec/PlistBuddy -c 'Print :NSMicrophoneUsageDescription' build/package/Payload/App.app/Info.plist
+          (cd build/package && ditto -c -k --keepParent Payload ../artifacts/PianoCottage-unsigned.ipa)
+          unzip -t build/artifacts/PianoCottage-unsigned.ipa
+          cp docs/INSTALL-IOS.md build/artifacts/INSTALL-IOS.md
+          (cd build/artifacts && shasum -a 256 PianoCottage-unsigned.ipa > SHA256.txt)
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: PianoCottage-iPhone-unsigned
+          path: build/artifacts/
+          if-no-files-found: error
+          retention-days: 30
+      - name: Save build log on failure
+        if: failure()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: iOS-build-log
+          path: build-xcode.log
+          retention-days: 7

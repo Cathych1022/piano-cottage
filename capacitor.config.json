@@ -1,0 +1,21 @@
+{
+  "appId": "io.github.cathych1022.pianocottage",
+  "appName": "钢琴小屋",
+  "webDir": "dist",
+  "backgroundColor": "#f8e8c7",
+  "loggingBehavior": "debug",
+  "ios": {
+    "contentInset": "never",
+    "preferredContentMode": "mobile",
+    "backgroundColor": "#f8e8c7"
+  },
+  "plugins": {
+    "StatusBar": { "style": "DARK", "overlaysWebView": true },
+    "SplashScreen": {
+      "launchAutoHide": true,
+      "launchShowDuration": 500,
+      "backgroundColor": "#f8e8c7",
+      "showSpinner": false
+    }
+  }
+}

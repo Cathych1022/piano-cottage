@@ -258,8 +258,9 @@ function initUI(){
  $('v7weekForward').onclick=()=>{weekOffset=Math.min(0,weekOffset+1);render()};
  $('v7monthBack').onclick=()=>{monthOffset=Math.max(-120,monthOffset-1);selectedDay='';render()};
  $('v7monthForward').onclick=()=>{monthOffset=Math.min(0,monthOffset+1);selectedDay='';render()};
- $('v7export').onclick=()=>{
+ $('v7export').onclick=async()=>{
   try{persist();const data=JSON.stringify({...state,exportedAt:new Date().toISOString()},null,2);
+   if(window.NativeCottage?.isNative){await window.NativeCottage.exportBackup(data,'piano-cottage-backup-'+dateKey(new Date())+'.json');return;}
    const blob=new Blob([data],{type:'application/json'}),url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download='piano-cottage-backup-'+dateKey(new Date())+'.json';document.body.append(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),30000);notify('备份已生成，请将 JSON 文件保存到 iPhone 文件 App 或云盘。');
   }catch(e){notify('备份失败：'+e.message)}
  };

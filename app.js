@@ -161,5 +161,5 @@ window.PianoSession={
     await this.refreshProfile();
   }
 };
-if('serviceWorker'in navigator)navigator.serviceWorker.register('./sw.js').catch(()=>{});
+if(!window.NativeCottage?.isNative&&'serviceWorker'in navigator)navigator.serviceWorker.register('./sw.js').catch(()=>{});
 updateStats();
