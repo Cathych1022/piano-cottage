@@ -37,6 +37,8 @@
   const paper=root.querySelector('.paper');
   pages.practice.append(root.querySelector('.scene'),paper);
   paper.append(root.querySelector('.actions'),$('message'));
+  $('reset').innerHTML=icon('restore')+'<span>重置</span>';
+  $('reset').title='重置本次计时';
   const details=el('details','ai-details');
   details.innerHTML='<summary><span class="mic-dot" aria-hidden="true">♩</span><span id="compactAI">轻触开始，聆听琴声</span><span class="info-icon" aria-hidden="true">i</span></summary>';
   details.append($('micDiagnostic'),root.querySelector('.privacy'));
@@ -55,7 +57,10 @@
   const keys=el('div','piano-keys');keys.setAttribute('aria-hidden','true');
   for(let i=0;i<15;i++){keys.append(el('i',[0,1,3,4,5].includes(i%7)?'black':'white'));}
   const keysCat=el('div','cat-sprite keys-cat');keysCat.setAttribute('aria-hidden','true');
-  pages.practice.append(el('p','quiet-caption','每一个音符，都值得被珍藏'),keysCat,keys);
+  const practiceFooter=el('div','practice-footer');
+  practiceFooter.setAttribute('aria-hidden','true');
+  practiceFooter.append(el('p','quiet-caption','每一个音符，都值得被珍藏'),keysCat,keys);
+  pages.practice.append(practiceFooter);
 
   const board=root.querySelector('.v7-board');
   const weekNav=$('v7weekBack').parentElement;
@@ -111,7 +116,7 @@
     Object.entries(pages).forEach(([key,n])=>{n.hidden=key!==page;});
     nav.querySelectorAll('button').forEach(b=>{b.classList.toggle('selected',b.dataset.page===page);if(b.dataset.page===page)b.setAttribute('aria-current','page');else b.removeAttribute('aria-current');});
     root.dataset.page=page;header.querySelector('.title').innerHTML=icon(titles[page][0])+'<span>'+titles[page][1]+'</span>';
-    controls.hidden=page!=='practice';window.scrollTo({top:0,behavior:'instant'});
+    controls.hidden=page!=='practice';screens.scrollTop=0;window.scrollTo({top:0,behavior:'instant'});
   }
   nav.addEventListener('click',e=>{const b=e.target.closest('button[data-page]');if(b)show(b.dataset.page);});
   function editProfile(){ $('v7profileButton').click(); }
