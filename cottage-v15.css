@@ -1,0 +1,80 @@
+@font-face { font-family: Cottage Playful; src: url('assets/fonts/cottage-playful.woff2') format('woff2'); font-display: swap; }
+@font-face { font-family: Cottage Text; src: url('assets/fonts/cottage-text.woff2') format('woff2'); font-display: swap; }
+@font-face { font-family: Cottage Hand; src: url('assets/fonts/cottage-hand.woff2') format('woff2'); font-display: swap; }
+:root { --serif: 'Cottage Playful','Cottage Hand','KaiTi',serif; --body-font: 'Cottage Hand','Cottage Text','PingFang SC',sans-serif; }
+html:lang(en) { --serif: 'Cottage Hand','Cottage Text',cursive; }
+body,button,input,select,dialog { font-family: var(--body-font); }
+.title,.tab-bar button,.btn.primary,.status,.goal-line strong,.chart-card h2,.reward-cards>div,#memberName,dialog h3,.v7-backup button { font-family: var(--serif); font-weight: 400; }
+.v7-profile-button strong,.countdown,.hint,.ai-details summary,.small-button,.v7-weekday,.v7-date,.member-name,.v7-day-detail { font-family: var(--body-font); }
+.timer { font-family: 'Cottage Hand',cursive; letter-spacing: 1px; font-size: 76px; }
+.wave { margin-top: 0; }
+.title { letter-spacing: 1px; }
+.hint { font-size: 12px; }
+.countdown { font-size: 12px; }
+.ai-details summary { font-size: 13px; }
+.quiet-caption { font-family: var(--body-font); }
+.practice-footer { position: relative; height: 142px; margin: 0 -20px; pointer-events: none; }
+.watercolor-keyboard { position: absolute; bottom: 0; left: 0; width: 100%; height: 155px; overflow: hidden; }
+.watercolor-keyboard img { display: block; width: 100%; height: auto; }
+.language-picker { border: 0; padding: 0 0 17px; margin: 0 0 18px; border-bottom: 1px solid #dec49a; }
+.language-picker legend { font-size: 17px; margin-bottom: 9px; }
+.language-options { display: flex; gap: 9px; }
+.language-options button { flex: 1; min-height: 44px; border: 1px solid #cdb17f; border-radius: 18px; background: #fff7e3; font-size: 19px; }
+.language-options button[aria-pressed=true] { background: #e3eccb; border-color: #78944e; color: #526d32; box-shadow: inset 0 0 0 2px #f8fbeb; }
+.language-picker p { font-size: 13px; color: #8d714e; margin: 8px 0 0; }
+dialog label { font-size: 16px; }
+dialog .v7-help { font-size: 14px; line-height: 1.6; }
+.v7-avatars { display: grid; grid-template-columns: repeat(3,minmax(0,1fr)); gap: 7px; margin: 12px 0; }
+.v7-avatars .v7-avatar { display: flex; align-items: center; flex-direction: column; gap: 5px; width: 100%; min-width: 0; height: auto; min-height: 71px; padding: 5px 1px; border: 2px solid transparent; background: transparent; border-radius: 16px; }
+.v7-avatars .v7-avatar.selected { border-color: #849a58; background: #eff1d8; }
+.v7-avatars .portrait { width: 52px; height: 52px; border: 0; outline: 0; }
+.avatar-name { color: #725134; font-size: 14px; line-height: 1.2; white-space: nowrap; }
+.v7-user-choice { display: flex; gap: 8px; align-items: center; }
+.profile-choice-avatar { width: 34px; height: 34px; border-radius: 50%; flex: none; display: grid; place-items: center; font-size: 26px; }
+.profile-choice-name { overflow-wrap: anywhere; text-align: left; }
+.profile-choice-check { margin-left: auto; }
+:is(.portrait,.v7-profile-button>span,.profile-choice-avatar):is([data-avatar='👦'],[data-avatar='👧'],[data-avatar='🐱'],[data-avatar='🐶'],[data-avatar='🦄']) {
+  color: transparent; font-size: 0; background-color: #f6e5c5;
+  background-image: url('assets/avatars-watercolor-v15.png'); background-size: 300% 200%; background-repeat: no-repeat;
+  background-position: var(--portrait-x,0%) var(--portrait-y,0%);
+}
+[data-avatar='👦'] { --portrait-x: 0%; --portrait-y: 0%; }
+[data-avatar='👧'] { --portrait-x: 50%; --portrait-y: 0%; }
+[data-avatar='🐱'] { --portrait-x: 100%; --portrait-y: 0%; }
+[data-avatar='🐶'] { --portrait-x: 0%; --portrait-y: 100%; }
+[data-avatar='🦄'] { --portrait-x: 50%; --portrait-y: 100%; }
+html:lang(en) .title { font-size: 29px; letter-spacing: .4px; }
+html:lang(en) .goal-line strong { font-size: 20px; }
+html:lang(en) .goal-line>span { font-size: 16px; }
+html:lang(en) .tab-bar button { font-size: 18px; }
+html:lang(en) .btn.primary { letter-spacing: .4px; }
+html:lang(en) #reset { font-size: 12px; }
+html:lang(en) .calendar-card .v7-week-nav strong { font-family: var(--serif); }
+@media (max-width: 699px), (max-height: 500px) {
+  .practice { --keyboard-space: clamp(44px,calc(100dvh - 580px),96px); }
+  .practice-footer { height: var(--keyboard-space); margin: 0 calc(-1 * var(--side)); }
+  .watercolor-keyboard { height: calc(var(--keyboard-space) + 32px); }
+  .timer { font-size: clamp(53px,16.5vw,67px); line-height: 1.02; margin-top: 3px; }
+  .status { font-size: 12px; }
+  .hint { font-size: 12px; line-height: 1.35; }
+  .countdown { font-size: 11px; line-height: 1.4; }
+  .ai-details summary { font-size: 12px; }
+  html:lang(en) .status { font-size: 16px; }
+  html:lang(en) .hint { font-size: 14px; }
+  html:lang(en) .countdown { font-size: 13px; }
+  html:lang(en) .ai-details summary { font-size: 15px; }
+  html:lang(en) .actions .btn.primary { font-size: 23px; }
+  html:lang(en) .member-name { font-size: 14px; }
+  html:lang(en) .v7-weekday { font-size: 15px; }
+}
+@media (max-width: 699px) and (max-height: 600px) {
+  .practice { --keyboard-space: 52px; }
+  .timer { font-size: clamp(48px,15.5vw,58px); }
+  .hint { font-size: 11px; }
+  .countdown { font-size: 10px; }
+  html:lang(en) .hint { font-size: 12px; }
+  html:lang(en) .countdown { font-size: 11px; }
+}
+@media (max-width: 699px) and (max-height: 520px) {
+  .practice { --keyboard-space: 40px; grid-template-rows: minmax(12px,1fr) auto var(--keyboard-space); }
+}

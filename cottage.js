@@ -45,9 +45,9 @@
   details.append($('micDiagnostic'),root.querySelector('.privacy'));
   $('countdown').after(details);
   const updateAI=()=>{
-    const detail=$('aiDetail').textContent;
+    const detail=window.I18n.sourceText($('aiDetail'));
     const scores=detail.match(/钢琴 (\d+)% · 人声 (\d+)%/);
-    const status=$('detectValue').textContent;
+    const status=window.I18n.sourceText($('detectValue'));
     $('compactAI').textContent=/未加载|关闭/.test(status)?'轻触开始，聆听琴声':
       /下载|正在加载/.test(status)?'正在准备钢琴识别…':
       scores?'钢琴 '+scores[1]+'% · 人声 '+scores[2]+'%':
@@ -55,12 +55,12 @@
   };
   new MutationObserver(updateAI).observe($('micDiagnostic'),{subtree:true,childList:true,characterData:true});updateAI();
   Array.from($('wave').children).forEach((bar,i)=>bar.style.setProperty('--level',26+(8-Math.abs(8-i))*9.25));
-  const keys=el('div','piano-keys');keys.setAttribute('aria-hidden','true');
-  for(let i=0;i<10;i++){keys.append(el('i',[0,1,3,4,5].includes(i%7)?'black':'white'));}
-  const keysCat=el('div','cat-sprite keys-cat');keysCat.setAttribute('aria-hidden','true');
+  const keyboard=el('div','watercolor-keyboard');
+  const keyboardImage=el('img');keyboardImage.src='assets/keyboard-kitten-v15.png';keyboardImage.alt='';keyboardImage.width=2172;keyboardImage.height=724;
+  keyboard.append(keyboardImage);
   const practiceFooter=el('div','practice-footer');
   practiceFooter.setAttribute('aria-hidden','true');
-  practiceFooter.append(el('p','quiet-caption','每一个音符，都值得被珍藏'),keysCat,keys);
+  practiceFooter.append(el('p','quiet-caption','每一个音符，都值得被珍藏'),keyboard);
   pages.practice.append(practiceFooter);
 
   const board=root.querySelector('.v7-board');
@@ -133,7 +133,7 @@
     const chartMax=Math.max(p.dailyGoal,...chartValues,1);
     $('chartAxis').replaceChildren(...Array.from({length:5},(_,i)=>{const n=el('span');n.textContent=Math.round(chartMax*(4-i)/4)+' 分';return n;}));
     const detail=$('v7dayDetail');
-    if(detail.textContent.startsWith('点击日历') && $('v7monthTitle').textContent===new Date().getFullYear()+'年'+(new Date().getMonth()+1)+'月'){
+    if(window.I18n.sourceText(detail).startsWith('点击日历') && window.I18n.sourceText($('v7monthTitle'))===new Date().getFullYear()+'年'+(new Date().getMonth()+1)+'月'){
       const now=new Date(),ms=p.history[window.P7.dateKey(now)]||0;
       detail.textContent=(now.getMonth()+1)+'月'+now.getDate()+'日 · '+Math.floor(ms/60000)+' 分钟'+(ms>=p.dailyGoal*60000?' · 达成目标 ⭐':' · 今日练琴');
     }
@@ -151,7 +151,7 @@
       memberSignature=signature;const members=$('members');members.replaceChildren();
       for(const person of profiles){
         const b=el('button','member'+(person.id===p.id?' selected':''));b.type='button';b.setAttribute('aria-label','切换到'+person.name);b.setAttribute('aria-pressed',String(person.id===p.id));
-        const av=el('span','portrait');av.textContent=person.avatar;av.dataset.avatar=person.avatar;const name=el('span','member-name');name.textContent=person.name;b.append(av,name);
+        const av=el('span','portrait');av.textContent=person.avatar;av.dataset.avatar=person.avatar;const name=el('span','member-name');name.textContent=person.name;name.dataset.userContent='';b.append(av,name);
         b.onclick=async()=>{await window.PianoSession.switchTo(person.id);refreshDecorations();};members.append(b);
       }
       const add=el('button','member add-member','<span class="portrait">＋</span><span class="member-name">添加用户</span>');add.type='button';add.onclick=()=>{editProfile();$('v7name').value='';$('v7name').focus();};members.append(add);

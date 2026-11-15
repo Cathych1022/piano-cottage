@@ -141,7 +141,7 @@ async function stop(){generation++;listening=false;active=false;cancelAnimationF
 }
 function fail(message){$('message').textContent=message;stop()}
 $('start').onclick=()=>listening?stop():start();
-$('reset').onclick=()=>{if(confirm('重置本次累计时间？今日练习记录不会清除。')){accumulated=0;updateStats()}};
+$('reset').onclick=()=>{if(window.I18n.confirm('重置本次累计时间？今日练习记录不会清除。')){accumulated=0;updateStats()}};
 $('settings').onclick=()=>$('settingsDialog').showModal();$('closeSettings').onclick=()=>$('settingsDialog').close();
 $('sensitivity').oninput=e=>{sensitivity=Number(e.target.value);$('sensitivityText').textContent=['非常严格','严格','标准','宽松','很宽松'][sensitivity-1]};
 document.addEventListener('visibilitychange',()=>{if(document.hidden&&listening)$('message').textContent='锁屏/进入后台时 iPhone 可能停止音频分析，请保持 App 在前台';else if(!document.hidden&&listening&&ctx?.state==='suspended')ctx.resume().catch(()=>{})});

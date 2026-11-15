@@ -1,6 +1,6 @@
-// Piano Cottage v14 offline shell. AI assets require first-time network access.
-const CACHE='piano-cottage-v14';
-const ASSETS=['./','./index.html','./app.js?v=14','./v7.js?v=14','./v7.css?v=14','./cottage.css?v=14','./mobile.css?v=14','./storybook-details.css?v=14','./cottage.js?v=14','./assets/cottage-watercolor.png','./assets/garden-watercolor.png','./assets/cat-companions.png','./assets/timer-parchment-v14.png','./assets/girl-avatar-v14.png','./manifest.webmanifest','./icon.svg'];
+// Piano Cottage v15 offline shell. AI assets require first-time network access.
+const CACHE='piano-cottage-v15';
+const ASSETS=['./','./index.html','./app.js?v=15','./v7.js?v=15','./v7.css?v=15','./cottage.css?v=15','./mobile.css?v=15','./storybook-details.css?v=15','./cottage-v15.css?v=15','./i18n.js?v=15','./assets/keyboard-kitten-v15.png','./assets/avatars-watercolor-v15.png','./assets/fonts/cottage-playful.woff2','./assets/fonts/cottage-text.woff2','./assets/fonts/cottage-hand.woff2','./cottage.js?v=15','./assets/cottage-watercolor.png','./assets/garden-watercolor.png','./assets/cat-companions.png','./assets/timer-parchment-v14.png','./assets/girl-avatar-v14.png','./manifest.webmanifest','./icon.svg'];
 self.addEventListener('install',event=>{
  event.waitUntil(caches.open(CACHE).then(cache=>cache.addAll(ASSETS)).then(()=>self.skipWaiting()));
 });

@@ -164,19 +164,30 @@ function initUI(){
   const p=current();selectedAvatar=p.avatar;$('v7name').value=p.name;
   const list=$('v7profiles');clear(list);
   state.profiles.forEach(x=>{
-   const b=el('button','v7-user-choice',x.avatar+' '+x.name+(x.id===p.id?' ✓':''));b.type='button';
+   const b=el('button','v7-user-choice');b.type='button';
+   const avatar=el('span','profile-choice-avatar',x.avatar);avatar.dataset.avatar=x.avatar;avatar.setAttribute('aria-hidden','true');
+   const name=el('span','profile-choice-name',x.name);name.dataset.userContent='';b.append(avatar,name);
+   if(x.id===p.id)b.append(el('span','profile-choice-check','✓'));
    if(x.id===p.id)b.classList.add('selected');
    b.addEventListener('click',async()=>{if(x.id!==current().id)await window.PianoSession.switchTo(x.id);paintProfiles()});
    list.append(b);
   });
-  const av=$('v7avatars');clear(av);AVATARS.forEach(a=>{const b=el('button','v7-avatar',a);b.type='button';b.dataset.avatar=a;b.setAttribute('aria-label',a==='👧'?'草帽女孩头像':a+'头像');if(a===selectedAvatar)b.classList.add('selected');b.addEventListener('click',()=>{selectedAvatar=a;paintAvatarSelection()});av.append(b)});
+  const av=$('v7avatars');clear(av);
+  const choices=['👦','👧','🐱','🐶','🦄'],names={'👦':'男孩','👧':'女孩','🐱':'小猫','🐶':'小狗','🦄':'独角兽'};
+  if(!choices.includes(selectedAvatar))choices.push(selectedAvatar);
+  choices.forEach(a=>{const b=el('button','v7-avatar');b.type='button';b.dataset.choice=a;b.setAttribute('aria-label',(names[a]||a)+'头像');
+    const portrait=el('span','portrait',a);portrait.dataset.avatar=a;portrait.setAttribute('aria-hidden','true');
+    b.append(portrait,el('span','avatar-name',names[a]||a));
+    b.classList.toggle('selected',a===selectedAvatar);b.setAttribute('aria-pressed',String(a===selectedAvatar));
+    b.addEventListener('click',()=>{selectedAvatar=a;paintAvatarSelection()});av.append(b);
+  });
  }
- function paintAvatarSelection(){Array.from($('v7avatars').children).forEach(b=>b.classList.toggle('selected',b.textContent===selectedAvatar))}
+ function paintAvatarSelection(){Array.from($('v7avatars').children).forEach(b=>{const selected=b.dataset.choice===selectedAvatar;b.classList.toggle('selected',selected);b.setAttribute('aria-pressed',String(selected));})}
  $('v7profileButton').onclick=()=>{paintProfiles();dialog.showModal()};
  $('v7closeProfile').onclick=()=>dialog.close();
  $('v7saveProfile').onclick=()=>{try{updateProfile(current().id,{name:$('v7name').value,avatar:selectedAvatar});paintProfiles();notify('用户资料已保存')}catch(e){notify(e.message)}};
  $('v7addProfile').onclick=async()=>{try{const name=safeName($('v7name').value);if(!name)throw Error('请输入新用户名');await window.PianoSession.stopListening();const x=addProfile(name,selectedAvatar);await window.PianoSession.refreshProfile();paintProfiles();notify('已创建用户：'+x.name)}catch(e){notify(e.message)}};
- $('v7deleteProfile').onclick=async()=>{if(state.profiles.length===1){notify('至少保留一个用户');return}const p=current();if(!confirm('永久删除「'+p.name+'」及其全部练琴记录？建议先导出备份。'))return;await window.PianoSession.stopListening();removeProfile(p.id);await window.PianoSession.refreshProfile();paintProfiles();notify('用户已删除')};
+ $('v7deleteProfile').onclick=async()=>{if(state.profiles.length===1){notify('至少保留一个用户');return}const p=current();if(!window.I18n.confirm('永久删除「'+p.name+'」及其全部练琴记录？建议先导出备份。'))return;await window.PianoSession.stopListening();removeProfile(p.id);await window.PianoSession.refreshProfile();paintProfiles();notify('用户已删除')};
  $('v7goalButton').onclick=()=>{$('v7dailyInput').value=current().dailyGoal;$('v7weeklyInput').value=current().weeklyGoal;goals.showModal()};
  $('v7closeGoal').onclick=()=>goals.close();
  $('v7saveGoal').onclick=()=>{const daily=Number($('v7dailyInput').value),weekly=Number($('v7weeklyInput').value);if(!Number.isInteger(daily)||daily<1||daily>360||!Number.isInteger(weekly)||weekly<1||weekly>3000){notify('每日目标需为 1–360 分钟，每周目标需为 1–3000 分钟');return}updateProfile(current().id,{dailyGoal:daily,weeklyGoal:weekly});goals.close();notify('目标已保存')};
@@ -195,7 +206,7 @@ function initUI(){
   try{
    if(file.size>2*1024*1024)throw Error('备份文件超过 2MB');
    const contents=await file.text(),parsed=JSON.parse(contents);validated(parsed);
-   if(!confirm('恢复备份会覆盖本机 v7 的全部用户和练琴记录。确定继续吗？'))return;
+   if(!window.I18n.confirm('恢复备份会覆盖本机 v7 的全部用户和练琴记录。确定继续吗？'))return;
    await window.PianoSession.stopListening();restore(parsed);await window.PianoSession.refreshProfile();notify('备份恢复成功！');
   }catch(err){notify('恢复失败：'+err.message)}finally{e.target.value=''}
  };
