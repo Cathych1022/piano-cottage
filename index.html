@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
   <meta name="theme-color" content="#f8e8c7">
-  <meta name="piano-cottage-version" content="13">
+  <meta name="piano-cottage-version" content="14">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="default">
   <meta name="apple-mobile-web-app-title" content="钢琴小屋">
@@ -12,9 +12,10 @@
   <link rel="manifest" href="manifest.webmanifest">
   <link rel="apple-touch-icon" href="icon.svg">
   <link rel="icon" href="icon.svg" type="image/svg+xml">
-  <link rel="stylesheet" href="v7.css?v=13">
-  <link rel="stylesheet" href="cottage.css?v=13">
-  <link rel="stylesheet" href="mobile.css?v=13">
+  <link rel="stylesheet" href="v7.css?v=14">
+  <link rel="stylesheet" href="cottage.css?v=14">
+  <link rel="stylesheet" href="mobile.css?v=14">
+  <link rel="stylesheet" href="storybook-details.css?v=14">
   <title>钢琴小屋 · 自动练琴计时</title>
 </head>
 <body>
@@ -22,13 +23,13 @@
     <header class="header"><h1 class="title">钢琴小屋</h1><button class="settings" id="settings" type="button" aria-label="监听设置">⚙</button></header>
     <div class="scene" role="img" aria-label="阳光洒进花藤环绕的小屋，窗边有钢琴、乐谱和熟睡的小猫"></div>
     <section class="paper" aria-label="练琴计时">
-      <div class="status" id="status" role="status">♪ 等待钢琴声音</div>
+      <div class="status" id="status" role="status">等待钢琴声音</div>
       <div class="timer" id="timer" role="timer" aria-label="本次练琴时长">00:00:00</div>
       <div class="wave" id="wave" aria-hidden="true"></div>
       <div class="hint" id="hint">点击开始监听，让琴声点亮小屋</div>
       <div class="countdown" id="countdown">连续 5 秒未识别到钢琴后自动暂停</div>
     </section>
-    <div class="actions"><button class="btn primary" id="start" type="button">♩ 开始监听</button><button class="btn" id="reset" type="button" aria-label="重置本次计时">↻ 重置</button></div>
+    <div class="actions"><button class="btn primary" id="start" type="button" aria-pressed="false"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><rect x="8" y="2" width="8" height="13" rx="4"/><path d="M5 10v2a7 7 0 0 0 14 0v-2m-7 9v3m-4 0h8"/></svg><span class="listen-label">开始监听</span></button><button class="btn" id="reset" type="button" aria-label="重置本次计时">↻ 重置</button></div>
     <div class="extra" id="message" role="status"></div>
     <section class="summary"><h2>练习小记</h2><div class="statrow"><div class="stat"><small>今日练习</small><b id="today">0 分钟</b></div><div class="stat"><small>近 7 天</small><b id="week">0 分钟</b></div></div></section>
     <div class="privacy">麦克风音频仅在本机分析，不上传录音。首次使用需联网加载识别模型；仅确认的钢琴片段计时。</div>
@@ -41,8 +42,8 @@
     <p class="v7-help">建议在安静的环境使用“标准”或“严格”模式。识别仍可能漏判或误判，请保持页面在前台。</p>
     <button class="btn" id="closeSettings" type="button">完成</button>
   </dialog>
-  <script src="v7.js?v=13"></script>
-  <script src="app.js?v=13"></script>
-  <script src="cottage.js?v=13"></script>
+  <script src="v7.js?v=14"></script>
+  <script src="app.js?v=14"></script>
+  <script src="cottage.js?v=14"></script>
 </body>
 </html>

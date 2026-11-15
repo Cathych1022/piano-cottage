@@ -169,7 +169,7 @@ function initUI(){
    b.addEventListener('click',async()=>{if(x.id!==current().id)await window.PianoSession.switchTo(x.id);paintProfiles()});
    list.append(b);
   });
-  const av=$('v7avatars');clear(av);AVATARS.forEach(a=>{const b=el('button','v7-avatar',a);b.type='button';if(a===selectedAvatar)b.classList.add('selected');b.addEventListener('click',()=>{selectedAvatar=a;paintAvatarSelection()});av.append(b)});
+  const av=$('v7avatars');clear(av);AVATARS.forEach(a=>{const b=el('button','v7-avatar',a);b.type='button';b.dataset.avatar=a;b.setAttribute('aria-label',a==='👧'?'草帽女孩头像':a+'头像');if(a===selectedAvatar)b.classList.add('selected');b.addEventListener('click',()=>{selectedAvatar=a;paintAvatarSelection()});av.append(b)});
  }
  function paintAvatarSelection(){Array.from($('v7avatars').children).forEach(b=>b.classList.toggle('selected',b.textContent===selectedAvatar))}
  $('v7profileButton').onclick=()=>{paintProfiles();dialog.showModal()};

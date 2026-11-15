@@ -1,6 +1,6 @@
-// Piano Cottage v13 offline shell. AI assets require first-time network access.
-const CACHE='piano-cottage-v13';
-const ASSETS=['./','./index.html','./app.js?v=13','./v7.js?v=13','./v7.css?v=13','./cottage.css?v=13','./mobile.css?v=13','./cottage.js?v=13','./assets/cottage-watercolor.png','./assets/garden-watercolor.png','./assets/cat-companions.png','./manifest.webmanifest','./icon.svg'];
+// Piano Cottage v14 offline shell. AI assets require first-time network access.
+const CACHE='piano-cottage-v14';
+const ASSETS=['./','./index.html','./app.js?v=14','./v7.js?v=14','./v7.css?v=14','./cottage.css?v=14','./mobile.css?v=14','./storybook-details.css?v=14','./cottage.js?v=14','./assets/cottage-watercolor.png','./assets/garden-watercolor.png','./assets/cat-companions.png','./assets/timer-parchment-v14.png','./assets/girl-avatar-v14.png','./manifest.webmanifest','./icon.svg'];
 self.addEventListener('install',event=>{
  event.waitUntil(caches.open(CACHE).then(cache=>cache.addAll(ASSETS)).then(()=>self.skipWaiting()));
 });

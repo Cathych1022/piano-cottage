@@ -20,7 +20,8 @@ function save(){window.P7.save();window.P7.refresh();}
 function format(ms){const s=Math.floor(ms/1000);return [Math.floor(s/3600),Math.floor(s%3600/60),s%60].map(n=>String(n).padStart(2,'0')).join(':')}
 function short(ms){const m=Math.floor(ms/60000);return m>=60?`${Math.floor(m/60)}时${m%60}分`:`${m} 分钟`}
 function updateStats(){ $('timer').textContent=format(accumulated);$('today').textContent=short(history[dayKey()]||0);let sum=0;for(let i=0;i<7;i++){const d=new Date();d.setDate(d.getDate()-i);const k=`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;sum+=history[k]||0}$('week').textContent=short(sum)}
-function setState(kind,info){const st=$('status');st.className='status '+(kind==='active'?'active':kind==='paused'?'paused':'');st.textContent=kind==='active'?'♫ 识别到钢琴':kind==='paused'?'Ⅱ 已暂停':'♪ 等待钢琴声音';$('hint').textContent=info;$('wave').classList.toggle('live',kind==='active')}
+function setState(kind,info){const st=$('status');st.className='status '+(kind==='active'?'active':kind==='paused'?'paused':'');st.textContent=kind==='active'?'连续演奏识别中':kind==='paused'?'已暂停':'等待钢琴声音';$('hint').textContent=info;$('wave').classList.toggle('live',kind==='active')}
+function updateListenButton(running){const b=$('start');(b.querySelector('.listen-label')||b).textContent=running?'停止监听':'开始监听';b.setAttribute('aria-pressed',String(running))}
 for(let i=0;i<17;i++){const b=document.createElement('i');b.style.setProperty('--h',`${9+Math.round(Math.abs(8-i)*1.6)}px`);b.style.setProperty('--delay',`${i*.05}s`);$('wave').append(b)}
 const meter=document.createElement('div');meter.id='micDiagnostic';meter.style.cssText='margin-top:12px;font-size:12px;line-height:1.7;color:#795640';meter.innerHTML='<div>🎙 麦克风 <span id="micValue">0%</span> · <span id="detectValue">AI 未加载</span></div><div style="height:8px;border-radius:8px;background:#dec7a3;overflow:hidden;margin:4px auto;max-width:240px"><div id="micBar" style="height:100%;width:0%;background:#6f9b77;transition:width .12s"></div></div><div id="aiDetail" aria-live="polite">AI 检测 · 只统计确认的钢琴片段</div>';
 $('countdown').insertAdjacentElement('afterend',meter);
@@ -126,7 +127,7 @@ async function start(){
     if(ctx.state!=='running')await ctx.resume();
     samples=[];sampleCount=0;lastPiano=0;lastStrongPiano=0;smoothedPiano=0;recentPianoFrames=0;lastAudioEnergy=0;inspectedWindows=0;listening=true;active=false;
     node.onaudioprocess=onAudio;
-    $('start').textContent='■ 停止监听';$('detectValue').textContent='AI 已启动，等待钢琴';
+    updateListenButton(true);$('detectValue').textContent='AI 已启动，等待钢琴';
     $('aiDetail').textContent='钢琴 AI 检测 · Safari 兼容模式（仅 Piano 计时）';$('message').textContent='';
     setState('idle','请弹奏钢琴，AI 正在分辨钢琴声和人声');
     raf=requestAnimationFrame(uiLoop);
@@ -136,7 +137,7 @@ async function start(){
 async function stop(){generation++;listening=false;active=false;cancelAnimationFrame(raf);
   if(node){node.onaudioprocess=null;try{node.disconnect()}catch{}node=null}if(source){try{source.disconnect()}catch{}source=null}if(silentGain){try{silentGain.disconnect()}catch{}silentGain=null}
   stream?.getTracks().forEach(t=>t.stop());stream=null;if(ctx){await ctx.close().catch(()=>{});ctx=null}
-  samples=[];sampleCount=0;lastStrongPiano=0;smoothedPiano=0;recentPianoFrames=0;save();$('start').textContent='🎹 开始监听';setState('idle','监听已关闭，点击按钮重新开始');$('countdown').textContent='超过 5 秒未检测到钢琴后暂停；停顿不计时';$('detectValue').textContent='监听已关闭';$('micBar').style.width='0%';$('micValue').textContent='0%';
+  samples=[];sampleCount=0;lastStrongPiano=0;smoothedPiano=0;recentPianoFrames=0;save();updateListenButton(false);setState('idle','监听已关闭，点击按钮重新开始');$('countdown').textContent='超过 5 秒未检测到钢琴后暂停；停顿不计时';$('detectValue').textContent='监听已关闭';$('micBar').style.width='0%';$('micValue').textContent='0%';
 }
 function fail(message){$('message').textContent=message;stop()}
 $('start').onclick=()=>listening?stop():start();

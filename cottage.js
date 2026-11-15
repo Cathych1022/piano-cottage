@@ -18,7 +18,8 @@
     leaf:'<path d="M4 21c3-7 7-11 15-17M7 15C0 3 15 3 21 2c0 12-3 17-14 13Z"/>',
     settings:'<path d="m10 3-1 3-3 1-3-1-1 4 3 2v3l-2 2 3 3 3-1 3 1 1 3 4-1 1-3 3-2 3 1 1-4-3-2-1-3 2-3-3-2-3 1-3-1Z" transform="translate(1 0) scale(.85)"/><circle cx="12" cy="12" r="3"/>',
     edit:'<path d="m4 16-1 5 5-1L21 7l-4-4ZM14 6l4 4"/>',
-    chevron:'<path d="m9 5 7 7-7 7"/>'
+    chevron:'<path d="m9 5 7 7-7 7"/>',
+    mic:'<rect x="8" y="2" width="8" height="13" rx="4"/><path d="M5 10v2a7 7 0 0 0 14 0v-2m-7 9v3m-4 0h8"/>'
   };
   const icon = name => '<svg class="icon" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">'+(icons[name] || icons.leaf)+'</svg>';
   const el = (tag, cls, html) => { const n=document.createElement(tag); if(cls)n.className=cls; if(html!==undefined)n.innerHTML=html; return n; };
@@ -40,7 +41,7 @@
   $('reset').innerHTML=icon('restore')+'<span>重置</span>';
   $('reset').title='重置本次计时';
   const details=el('details','ai-details');
-  details.innerHTML='<summary><span class="mic-dot" aria-hidden="true">♩</span><span id="compactAI">轻触开始，聆听琴声</span><span class="info-icon" aria-hidden="true">i</span></summary>';
+  details.innerHTML='<summary><span class="mic-dot" aria-hidden="true">'+icon('mic')+'</span><span id="compactAI">轻触开始，聆听琴声</span><span class="info-icon" aria-hidden="true">i</span></summary>';
   details.append($('micDiagnostic'),root.querySelector('.privacy'));
   $('countdown').after(details);
   const updateAI=()=>{
@@ -53,9 +54,9 @@
       /人声/.test(status)?'听到人声，暂不计时':'正在聆听 · 等待琴声';
   };
   new MutationObserver(updateAI).observe($('micDiagnostic'),{subtree:true,childList:true,characterData:true});updateAI();
-  Array.from($('wave').children).forEach((bar,i)=>bar.style.setProperty('--h',(9+(8-Math.abs(8-i))*2.4)+'px'));
+  Array.from($('wave').children).forEach((bar,i)=>bar.style.setProperty('--level',26+(8-Math.abs(8-i))*9.25));
   const keys=el('div','piano-keys');keys.setAttribute('aria-hidden','true');
-  for(let i=0;i<15;i++){keys.append(el('i',[0,1,3,4,5].includes(i%7)?'black':'white'));}
+  for(let i=0;i<10;i++){keys.append(el('i',[0,1,3,4,5].includes(i%7)?'black':'white'));}
   const keysCat=el('div','cat-sprite keys-cat');keysCat.setAttribute('aria-hidden','true');
   const practiceFooter=el('div','practice-footer');
   practiceFooter.setAttribute('aria-hidden','true');
