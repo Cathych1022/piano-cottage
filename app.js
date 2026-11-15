@@ -1,5 +1,5 @@
 'use strict';
-// Piano Cottage v6: YAMNet sound-event classification. No loudness-based fallback.
+// Piano Cottage v7: YAMNet sound-event classification. No loudness-based fallback.
 const $ = id => document.getElementById(id);
 const FIVE_SECONDS = 5000;
 let windowSamples = 15600; // adjust to actual iPhone AudioContext sample rate
@@ -8,20 +8,20 @@ const LIBS = [
   { module: 'https://cdn.jsdelivr.net/npm/@mediapipe/tasks-audio@0.10.35/audio_bundle.mjs', wasm: 'https://cdn.jsdelivr.net/npm/@mediapipe/tasks-audio@0.10.35/wasm' },
   { module: 'https://unpkg.com/@mediapipe/tasks-audio@0.10.35/audio_bundle.mjs', wasm: 'https://unpkg.com/@mediapipe/tasks-audio@0.10.35/wasm' }
 ];
-const dbKey = 'storybook-piano-practice-v1';
+// v7 profiles are loaded before this file; existing v6 history migrates once.
 let ctx=null, stream=null, source=null, node=null, silentGain=null, classifier=null;
 let listening=false, active=false, initializing=false, generation=0, raf=0;
 let lastPiano=0, accumulated=0, lastSave=0, lastUI=0;
 let samples=[], sampleCount=0, acceptedWindows=0, inspectedWindows=0, sensitivity=3, lastLabel='等待音频分析';
-let history={};try{history=JSON.parse(localStorage.getItem(dbKey)||'{}')||{}}catch{}
+let history=window.P7.current().history;
 const dayKey=()=>{const d=new Date();return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`};
-function save(){try{localStorage.setItem(dbKey,JSON.stringify(history))}catch{}}
+function save(){window.P7.save();window.P7.refresh();}
 function format(ms){const s=Math.floor(ms/1000);return [Math.floor(s/3600),Math.floor(s%3600/60),s%60].map(n=>String(n).padStart(2,'0')).join(':')}
 function short(ms){const m=Math.floor(ms/60000);return m>=60?`${Math.floor(m/60)}时${m%60}分`:`${m} 分钟`}
 function updateStats(){ $('timer').textContent=format(accumulated);$('today').textContent=short(history[dayKey()]||0);let sum=0;for(let i=0;i<7;i++){const d=new Date();d.setDate(d.getDate()-i);const k=`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;sum+=history[k]||0}$('week').textContent=short(sum)}
 function setState(kind,info){const st=$('status');st.className='status '+(kind==='active'?'active':kind==='paused'?'paused':'');st.textContent=kind==='active'?'♫ 识别到钢琴':kind==='paused'?'Ⅱ 已暂停':'♪ 等待钢琴声音';$('hint').textContent=info;$('wave').classList.toggle('live',kind==='active')}
 for(let i=0;i<17;i++){const b=document.createElement('i');b.style.setProperty('--h',`${9+Math.round(Math.abs(8-i)*1.6)}px`);b.style.setProperty('--delay',`${i*.05}s`);$('wave').append(b)}
-const meter=document.createElement('div');meter.id='micDiagnostic';meter.style.cssText='margin-top:12px;font-size:12px;line-height:1.7;color:#795640';meter.innerHTML='<div>🎙 麦克风 <span id="micValue">0%</span> · <span id="detectValue">AI v6 未加载</span></div><div style="height:8px;border-radius:8px;background:#dec7a3;overflow:hidden;margin:4px auto;max-width:240px"><div id="micBar" style="height:100%;width:0%;background:#6f9b77;transition:width .12s"></div></div><div id="aiDetail" aria-live="polite">AI v6 · 只统计确认的钢琴片段</div>';
+const meter=document.createElement('div');meter.id='micDiagnostic';meter.style.cssText='margin-top:12px;font-size:12px;line-height:1.7;color:#795640';meter.innerHTML='<div>🎙 麦克风 <span id="micValue">0%</span> · <span id="detectValue">AI v7 未加载</span></div><div style="height:8px;border-radius:8px;background:#dec7a3;overflow:hidden;margin:4px auto;max-width:240px"><div id="micBar" style="height:100%;width:0%;background:#6f9b77;transition:width .12s"></div></div><div id="aiDetail" aria-live="polite">AI v7 · 只统计确认的钢琴片段</div>';
 $('countdown').insertAdjacentElement('afterend',meter);
 function labelScore(categories, token){return Math.max(0,...categories.filter(c=>(c.categoryName||c.displayName||'').toLowerCase().includes(token)).map(c=>Number(c.score)||0))}
 function inspectAudio(block){
@@ -106,8 +106,8 @@ async function start(){
     if(ctx.state!=='running')await ctx.resume();
     samples=[];sampleCount=0;lastPiano=0;listening=true;active=false;
     node.onaudioprocess=onAudio;
-    $('start').textContent='■ 停止监听';$('detectValue').textContent='AI v6 已启动，等待钢琴';
-    $('aiDetail').textContent='钢琴 AI v6 · Safari 兼容模式（仅 Piano 计时）';$('message').textContent='';
+    $('start').textContent='■ 停止监听';$('detectValue').textContent='AI v7 已启动，等待钢琴';
+    $('aiDetail').textContent='钢琴 AI v7 · Safari 兼容模式（仅 Piano 计时）';$('message').textContent='';
     setState('idle','请弹奏钢琴，AI 正在分辨钢琴声和人声');
     raf=requestAnimationFrame(uiLoop);
   }catch(e){await stop();$('message').textContent='无法启动钢琴 AI：'+(e.message||String(e))+'。请保持联网并在 Safari 重新打开。'}
@@ -124,5 +124,21 @@ $('reset').onclick=()=>{if(confirm('重置本次累计时间？今日练习记�
 $('settings').onclick=()=>$('settingsDialog').showModal();$('closeSettings').onclick=()=>$('settingsDialog').close();
 $('sensitivity').oninput=e=>{sensitivity=Number(e.target.value);$('sensitivityText').textContent=['非常严格','严格','标准','宽松','很宽松'][sensitivity-1]};
 document.addEventListener('visibilitychange',()=>{if(document.hidden&&listening)$('message').textContent='锁屏/进入后台时 iPhone 可能停止音频分析，请保持 App 在前台';else if(!document.hidden&&listening&&ctx?.state==='suspended')ctx.resume().catch(()=>{})});
+// Prevent time leaking across family members: stop audio before switching or restoring.
+window.PianoSession={
+  async stopListening(){if(listening||initializing)await stop();else save()},
+  async refreshProfile(){
+    history=window.P7.current().history;
+    accumulated=0;lastPiano=0;active=false;samples=[];sampleCount=0;
+    updateStats();window.P7.refresh();
+    setState('idle','已切换至 '+window.P7.current().name+'，点击开始监听');
+  },
+  async switchTo(id){
+    if(id===window.P7.current().id)return;
+    await this.stopListening();
+    window.P7.changeActive(id);
+    await this.refreshProfile();
+  }
+};
 if('serviceWorker'in navigator)navigator.serviceWorker.register('./sw.js').catch(()=>{});
 updateStats();
