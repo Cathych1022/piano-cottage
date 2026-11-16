@@ -47,3 +47,10 @@ test('backup and recognition errors remain understandable',()=>{
   assert.equal(t('恢复失败：备份文件超过 2MB'),'Restore failed: Backup is larger than 2 MB');
   assert.match(t('无法启动钢琴 AI：请使用 HTTPS Safari 打开应用。请保持联网并在 Safari 重新打开。'),/^Could not start piano recognition: Open this app over HTTPS in Safari/);
 });
+
+test('screen-awake feedback and retry controls support English',()=>{
+  const {t}=locale('en');
+  assert.equal(t('重试屏幕常亮'),'Retry screen awake');
+  assert.match(t('屏幕常亮已开启，停止监听后恢复自动锁屏。'),/^Screen awake is on/);
+  assert.match(t('系统未允许屏幕常亮，请检查低电量模式后重试。'),/Low Power Mode/);
+});

@@ -15,6 +15,29 @@ let lastPiano=0, lastStrongPiano=0, accumulated=0, lastSave=0, lastUI=0;
 let smoothedPiano=0, recentPianoFrames=0, lastAudioEnergy=0;
 let samples=[], sampleCount=0, acceptedWindows=0, inspectedWindows=0, sensitivity=3, lastLabel='等待音频分析';
 let history=window.P7.current().history;
+let wakeLockWarningShown=false;
+function renderWakeLockStatus({status,wanted}){
+  const messages={
+    idle:'开始监听后自动保持屏幕常亮，停止后恢复自动锁屏。',
+    requesting:'正在开启屏幕常亮…',
+    active:'屏幕常亮已开启，停止监听后恢复自动锁屏。',
+    hidden:'回到页面后会重新开启屏幕常亮。',
+    blocked:'系统未允许屏幕常亮，请检查低电量模式后重试。',
+    released:'屏幕常亮已被系统关闭，请重试。',
+    unsupported:'此浏览器不支持屏幕常亮，请手动延长自动锁屏时间。'
+  };
+  $('wakeLockStatus').textContent=messages[status];
+  $('wakeLockRetryWrap').hidden=!(wanted&&['blocked','released'].includes(status));
+  if(wanted&&!document.hidden&&['blocked','released','unsupported'].includes(status)&&!wakeLockWarningShown){
+    wakeLockWarningShown=true;window.P7.notify(messages[status]);
+  }
+}
+const screenAwake=window.createScreenWakeLock({
+  request:navigator.wakeLock?.request?()=>navigator.wakeLock.request('screen'):null,
+  isVisible:()=>!document.hidden,
+  onChange:renderWakeLockStatus
+});
+$('wakeLockRetry').onclick=()=>{wakeLockWarningShown=false;screenAwake.resume();};
 const dayKey=()=>{const d=new Date();return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`};
 function save(){window.P7.save();window.P7.refresh();}
 function format(ms){const s=Math.floor(ms/1000);return [Math.floor(s/3600),Math.floor(s%3600/60),s%60].map(n=>String(n).padStart(2,'0')).join(':')}
@@ -111,6 +134,7 @@ async function loadClassifier(){
 async function start(){
   if(listening||initializing)return;
   initializing=true;const myGeneration=++generation;
+  wakeLockWarningShown=false;screenAwake.start();
   $('start').disabled=true;$('message').textContent='首次使用需联网下载 AI 模型（可能需要数秒）。音频只在手机上分析。';
   try{
     if(!navigator.mediaDevices?.getUserMedia)throw new Error('请使用 HTTPS Safari 打开应用');
@@ -126,6 +150,7 @@ async function start(){
     source.connect(node);node.connect(silentGain);silentGain.connect(ctx.destination);
     if(ctx.state!=='running')await ctx.resume();
     samples=[];sampleCount=0;lastPiano=0;lastStrongPiano=0;smoothedPiano=0;recentPianoFrames=0;lastAudioEnergy=0;inspectedWindows=0;listening=true;active=false;
+    screenAwake.resume();
     node.onaudioprocess=onAudio;
     updateListenButton(true);$('detectValue').textContent='AI 已启动，等待钢琴';
     $('aiDetail').textContent='钢琴 AI 检测 · Safari 兼容模式（仅 Piano 计时）';$('message').textContent='';
@@ -135,6 +160,7 @@ async function start(){
   finally{initializing=false;$('start').disabled=false}
 }
 async function stop(){generation++;listening=false;active=false;cancelAnimationFrame(raf);
+  screenAwake.stop();
   if(node){node.onaudioprocess=null;try{node.disconnect()}catch{}node=null}if(source){try{source.disconnect()}catch{}source=null}if(silentGain){try{silentGain.disconnect()}catch{}silentGain=null}
   stream?.getTracks().forEach(t=>t.stop());stream=null;if(ctx){await ctx.close().catch(()=>{});ctx=null}
   samples=[];sampleCount=0;lastStrongPiano=0;smoothedPiano=0;recentPianoFrames=0;save();updateListenButton(false);setState('idle','监听已关闭，点击按钮重新开始');$('countdown').textContent='超过 5 秒未检测到钢琴后暂停；停顿不计时';$('detectValue').textContent='监听已关闭';$('micBar').style.width='0%';$('micValue').textContent='0%';
@@ -144,7 +170,17 @@ $('start').onclick=()=>listening?stop():start();
 $('reset').onclick=()=>{if(window.I18n.confirm('重置本次累计时间？今日练习记录不会清除。')){accumulated=0;updateStats()}};
 $('settings').onclick=()=>$('settingsDialog').showModal();$('closeSettings').onclick=()=>$('settingsDialog').close();
 $('sensitivity').oninput=e=>{sensitivity=Number(e.target.value);$('sensitivityText').textContent=['非常严格','严格','标准','宽松','很宽松'][sensitivity-1]};
-document.addEventListener('visibilitychange',()=>{if(document.hidden&&listening)$('message').textContent='锁屏/进入后台时 iPhone 可能停止音频分析，请保持 App 在前台';else if(!document.hidden&&listening&&ctx?.state==='suspended')ctx.resume().catch(()=>{})});
+document.addEventListener('visibilitychange',()=>{
+  if(document.hidden){
+    screenAwake.suspend();
+    if(listening){save();$('message').textContent='锁屏/进入后台时 iPhone 可能停止音频分析，请保持 App 在前台';}
+  }else{
+    screenAwake.resume();
+    if(listening&&['suspended','interrupted'].includes(ctx?.state))ctx.resume().catch(()=>{});
+  }
+});
+window.addEventListener('pagehide',()=>{save();screenAwake.suspend();});
+window.addEventListener('pageshow',()=>screenAwake.resume());
 // Prevent time leaking across family members: stop audio before switching or restoring.
 window.PianoSession={
   async stopListening(){if(listening||initializing)await stop();else save()},

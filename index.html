@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
   <meta name="theme-color" content="#f8e8c7">
-  <meta name="piano-cottage-version" content="19">
+  <meta name="piano-cottage-version" content="20">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <!-- Let the Home Screen app paint behind the iPhone status bar.
        mobile.css keeps controls inside the safe area; the background fills it. -->
@@ -14,12 +14,12 @@
   <link rel="manifest" href="manifest.webmanifest">
   <link rel="apple-touch-icon" href="icon.svg">
   <link rel="icon" href="icon.svg" type="image/svg+xml">
-  <link rel="stylesheet" href="v7.css?v=19">
-  <link rel="stylesheet" href="cottage.css?v=19">
-  <link rel="stylesheet" href="mobile.css?v=19">
-  <link rel="stylesheet" href="storybook-details.css?v=19">
-  <link rel="stylesheet" href="cottage-v15.css?v=19">
-  <link rel="stylesheet" href="dashboards-v18.css?v=19">
+  <link rel="stylesheet" href="v7.css?v=20">
+  <link rel="stylesheet" href="cottage.css?v=20">
+  <link rel="stylesheet" href="mobile.css?v=20">
+  <link rel="stylesheet" href="storybook-details.css?v=20">
+  <link rel="stylesheet" href="cottage-v15.css?v=20">
+  <link rel="stylesheet" href="dashboards-v18.css?v=20">
   <title>钢琴小屋 · 自动练琴计时</title>
 </head>
 <body>
@@ -48,15 +48,18 @@
       </div>
       <p>语言选择会保存在此设备。</p>
     </fieldset>
+    <p class="v7-help" id="wakeLockStatus" role="status">开始监听后自动保持屏幕常亮，停止后恢复自动锁屏。</p>
+    <div id="wakeLockRetryWrap" hidden><button class="btn" id="wakeLockRetry" type="button">重试屏幕常亮</button></div>
     <label for="sensitivity">识别灵敏度：<span id="sensitivityText">标准</span></label>
     <input type="range" id="sensitivity" min="1" max="5" step="1" value="3">
     <p class="v7-help">小屋会分辨钢琴声与人声，仅累计确认的钢琴片段。连续 5 秒未识别到钢琴，会自动暂停；再次弹奏即可继续。</p>
     <p class="v7-help">建议在安静的环境使用“标准”或“严格”模式。识别仍可能漏判或误判，请保持页面在前台。</p>
     <button class="btn" id="closeSettings" type="button">完成</button>
   </dialog>
-  <script src="i18n.js?v=19"></script>
-  <script src="v7.js?v=19"></script>
-  <script src="app.js?v=19"></script>
-  <script src="cottage.js?v=19"></script>
+  <script src="i18n.js?v=20"></script>
+  <script src="v7.js?v=20"></script>
+  <script src="screen-awake.js?v=20"></script>
+  <script src="app.js?v=20"></script>
+  <script src="cottage.js?v=20"></script>
 </body>
 </html>
