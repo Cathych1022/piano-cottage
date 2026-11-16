@@ -56,7 +56,11 @@ function initial(){
 let state;
 try{const saved=localStorage.getItem(KEY);state=saved?validated(JSON.parse(saved)):initial();}
 catch(e){state=initial();}
-function persist(){try{localStorage.setItem(KEY,JSON.stringify(state));return true}catch(e){notify('存储空间不可用，请先导出备份');return false}}
+let storageWarningShown=false;
+function persist(){
+ try{localStorage.setItem(KEY,JSON.stringify(state));storageWarningShown=false;return true}
+ catch(e){if(!storageWarningShown){storageWarningShown=true;notify('存储空间不可用，请先导出备份')}return false}
+}
 function current(){return state.profiles.find(p=>p.id===state.activeId)||state.profiles[0]}
 // A local parental gate, not server authentication. Keep the history object
 // shared with the live timer, and roll back the addition if storage fails.

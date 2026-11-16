@@ -82,6 +82,9 @@ function inspectAudio(block){
     if(!active){active=true;setState('active','AI 确认是钢琴声音，正在累计有效练习时间 ♪')}
     accumulated+=duration;
     const key=dayKey();history[key]=(history[key]||0)+duration;
+    // Persist each accepted audio window before returning to the browser. A
+    // suspended animation loop or abrupt page close must not delay saving.
+    window.P7.save();
   }
   $('detectValue').textContent=strongPiano?'✅ 钢琴已确认':
       softPiano?'🎹 连续演奏识别中':
@@ -160,10 +163,11 @@ async function start(){
   finally{initializing=false;$('start').disabled=false}
 }
 async function stop(){generation++;listening=false;active=false;cancelAnimationFrame(raf);
+  save(); // Save before asynchronous microphone/AudioContext cleanup.
   screenAwake.stop();
   if(node){node.onaudioprocess=null;try{node.disconnect()}catch{}node=null}if(source){try{source.disconnect()}catch{}source=null}if(silentGain){try{silentGain.disconnect()}catch{}silentGain=null}
   stream?.getTracks().forEach(t=>t.stop());stream=null;if(ctx){await ctx.close().catch(()=>{});ctx=null}
-  samples=[];sampleCount=0;lastStrongPiano=0;smoothedPiano=0;recentPianoFrames=0;save();updateListenButton(false);setState('idle','监听已关闭，点击按钮重新开始');$('countdown').textContent='超过 5 秒未检测到钢琴后暂停；停顿不计时';$('detectValue').textContent='监听已关闭';$('micBar').style.width='0%';$('micValue').textContent='0%';
+  samples=[];sampleCount=0;lastStrongPiano=0;smoothedPiano=0;recentPianoFrames=0;updateListenButton(false);setState('idle','监听已关闭，点击按钮重新开始');$('countdown').textContent='超过 5 秒未检测到钢琴后暂停；停顿不计时';$('detectValue').textContent='监听已关闭';$('micBar').style.width='0%';$('micValue').textContent='0%';
 }
 function fail(message){$('message').textContent=message;stop()}
 $('start').onclick=()=>listening?stop():start();
@@ -172,8 +176,9 @@ $('settings').onclick=()=>$('settingsDialog').showModal();$('closeSettings').onc
 $('sensitivity').oninput=e=>{sensitivity=Number(e.target.value);$('sensitivityText').textContent=['非常严格','严格','标准','宽松','很宽松'][sensitivity-1]};
 document.addEventListener('visibilitychange',()=>{
   if(document.hidden){
+    save();
     screenAwake.suspend();
-    if(listening){save();$('message').textContent='锁屏/进入后台时 iPhone 可能停止音频分析，请保持 App 在前台';}
+    if(listening){$('message').textContent='锁屏/进入后台时 iPhone 可能停止音频分析，请保持 App 在前台';}
   }else{
     screenAwake.resume();
     if(listening&&['suspended','interrupted'].includes(ctx?.state))ctx.resume().catch(()=>{});

@@ -125,6 +125,7 @@
   const titles={practice:['home','钢琴小屋'],weekly:['chart','本周练琴'],mine:['user','我的小屋']};
   function show(page){
     if(!pages[page])page='practice';
+    if(root.dataset.page!==page)window.P7.save();
     Object.entries(pages).forEach(([key,n])=>{n.hidden=key!==page;});
     nav.querySelectorAll('button').forEach(b=>{b.classList.toggle('selected',b.dataset.page===page);if(b.dataset.page===page)b.setAttribute('aria-current','page');else b.removeAttribute('aria-current');});
     root.dataset.page=page;header.querySelector('.title').innerHTML=icon(titles[page][0])+'<span>'+titles[page][1]+'</span>';
