@@ -13,7 +13,8 @@ body,button,input,select,dialog { font-family: var(--body-font); }
 .countdown { font-size: 12px; }
 .ai-details summary { font-size: 13px; }
 .quiet-caption { font-family: var(--body-font); }
-.app-version { position:absolute; right:10px; bottom:2px; color:#8a7251; font:400 9px/1 var(--body-font); letter-spacing:.2px; white-space:nowrap; pointer-events:none; }
+/* Keep the label above the Home Screen gesture area, inside the existing nav. */
+.app-version { position:absolute; right:10px; bottom:calc(max(7px,var(--safe-bottom,env(safe-area-inset-bottom,0px))) + 2px); color:#795d3e; font:400 10px/1 var(--body-font); letter-spacing:.2px; white-space:nowrap; pointer-events:none; }
 .practice-footer { position: relative; height: 142px; margin: 0 -20px; pointer-events: none; }
 .watercolor-keyboard { position: absolute; bottom: 0; left: 0; width: 100%; height: 155px; overflow: hidden; }
 .watercolor-keyboard img { display: block; width: 100%; height: auto; }
