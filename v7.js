@@ -58,6 +58,21 @@ try{const saved=localStorage.getItem(KEY);state=saved?validated(JSON.parse(saved
 catch(e){state=initial();}
 function persist(){try{localStorage.setItem(KEY,JSON.stringify(state));return true}catch(e){notify('存储空间不可用，请先导出备份');return false}}
 function current(){return state.profiles.find(p=>p.id===state.activeId)||state.profiles[0]}
+// A local parental gate, not server authentication. Keep the history object
+// shared with the live timer, and roll back the addition if storage fails.
+function addManualTime(day,amount,password,profileId=current().id){
+ if(password!=='1022')throw Error('密码不正确，请重新输入');
+ const p=current();if(profileId!==p.id)throw Error('练琴者已切换，请重新打开补记');
+ if(typeof day!=='string'||!/^\d{4}-\d{2}-\d{2}$/.test(day)||dateKey(dateFromKey(day))!==day||day<'1900-01-01'||day>dateKey(new Date()))throw Error('请选择有效日期，不能晚于今天');
+ if(typeof amount!=='number'||!Number.isInteger(amount)||amount<1||amount>1440)throw Error('请输入 1–1440 的整数分钟');
+ const history=p.history,existed=Object.hasOwn(history,day),previous=history[day]||0;
+ if(previous+amount*60000>86400000)throw Error('当天累计时间不能超过 24 小时');
+ if(!existed&&Object.keys(history).length>=5000)throw Error('记录日期已达上限，请先导出备份');
+ history[day]=previous+amount*60000;
+ if(!persist()){if(existed)history[day]=previous;else delete history[day];throw Error('保存失败，存储空间不足，请先导出备份')}
+ const d=dateFromKey(day),now=new Date();selectedDay=day;monthOffset=(d.getFullYear()-now.getFullYear())*12+d.getMonth()-now.getMonth();
+ refresh();return history[day];
+}
 function refresh(){render();const s=$('profileName');if(s)s.textContent=current().name;applyAvatar($('profileAvatar'),current())}
 let noticeTimer;
 function notify(message){const n=$('v7notice');if(n){
@@ -178,7 +193,7 @@ function initUI(){
  '<div class="v7-section-title">📊 Weekly 每周练琴统计</div><div class="v7-row v7-week-nav"><button id="v7weekBack" type="button">‹ 上一周</button><strong id="v7weekTitle"></strong><button id="v7weekForward" type="button">下一周 ›</button></div>'+
  '<div class="v7-week-summary"><strong id="v7weekTotal"></strong><span id="v7weekCompare"></span></div><div class="v7-chart" id="v7weekly" aria-label="一周练习时间柱状图"></div>'+
  '<div class="v7-section-title">🗓️ 练琴日历</div><div class="v7-row v7-week-nav"><button id="v7monthBack" type="button">‹ 上一月</button><strong id="v7monthTitle"></strong><button id="v7monthForward" type="button">下一月 ›</button></div>'+
- '<div class="v7-calendar" id="v7calendar"></div><div class="v7-day-detail" id="v7dayDetail">点击日历日期，查看当日练琴时间</div>'+
+ '<div class="v7-calendar" id="v7calendar"></div><div class="v7-day-detail" id="v7dayDetail">点击日历日期，查看当日练琴时间</div><button id="v7manualButton" type="button" aria-label="手动补记">＋ 补记</button>'+
  '<div class="v7-section-title">💾 资料与备份</div><p class="v7-help">每个用户的练琴历史独立保存在这台设备中。导出备份可在换手机前保存记录。</p>'+
  '<div class="v7-backup"><button id="v7export" type="button">⬇ 导出 JSON 备份</button><button id="v7importButton" type="button">⬆ 恢复备份</button><input type="file" id="v7importFile" accept=".json,application/json" hidden></div>'+
  '<div id="v7notice" class="v7-notice" hidden></div>';
@@ -189,6 +204,25 @@ function initUI(){
  const goals=document.createElement('dialog');goals.className='v7-dialog';goals.id='v7goalsDialog';
  goals.innerHTML='<h3>🎯 设置练琴目标</h3><label for="v7dailyInput">每日目标（分钟）</label><input type="number" id="v7dailyInput" min="1" max="360" step="1"><label for="v7weeklyInput">每周目标（分钟）</label><input type="number" id="v7weeklyInput" min="1" max="3000" step="1"><p class="v7-help">每天达到每日目标获得 ⭐。连续练琴天数按有钢琴练习记录的自然日计算。</p><div class="v7-dialog-actions"><button id="v7saveGoal" type="button">保存目标</button><button id="v7closeGoal" type="button">取消</button></div>';
  document.body.append(goals);
+ const manual=document.createElement('dialog');manual.className='v7-dialog manual-dialog';manual.id='v7manualDialog';manual.setAttribute('aria-labelledby','v7manualTitle');
+ manual.innerHTML='<form id="v7manualForm"><h3 id="v7manualTitle">手动补记</h3><p class="manual-player"><span>当前练琴者</span> · <strong id="v7manualPlayer" data-user-content></strong></p><p class="v7-help">补记时间会加到当天已有记录，计入目标和统计。</p><label for="v7manualPassword">补记密码</label><input id="v7manualPassword" type="password" inputmode="numeric" autocomplete="off" required><div class="manual-fields"><div><label for="v7manualDate">练琴日期</label><input id="v7manualDate" type="date" min="1900-01-01" required></div><div><label for="v7manualMinutes">补记时长（分钟）</label><input id="v7manualMinutes" type="number" inputmode="numeric" min="1" max="1440" step="1" placeholder="例如：20" required></div></div><p id="v7manualError" class="manual-error" role="alert"></p><div class="v7-dialog-actions"><button type="submit" id="v7saveManual">保存补记</button><button type="button" id="v7cancelManual">取消</button></div></form>';
+ document.body.append(manual);
+ let manualProfileId='';
+ $('v7manualButton').onclick=()=>{
+  $('v7manualForm').reset();$('v7manualError').textContent='';manualProfileId=current().id;
+  $('v7manualPlayer').textContent=current().name;
+  $('v7manualDate').max=dateKey(new Date());$('v7manualDate').value=selectedDay||dateKey(new Date());
+  manual.showModal();
+ };
+ $('v7cancelManual').onclick=()=>manual.close();
+ manual.addEventListener('close',()=>{$('v7manualPassword').value='';manualProfileId='';});
+ $('v7manualForm').onsubmit=e=>{
+  e.preventDefault();if(!manual.open)return;
+  try{
+   addManualTime($('v7manualDate').value,Number($('v7manualMinutes').value),$('v7manualPassword').value,manualProfileId);
+   window.PianoSession?.refreshStats();manual.close();notify('补记已保存，日历和统计已更新');
+  }catch(error){$('v7manualError').textContent=error.message;}
+ };
  let selectedAvatar=current().avatar,selectedPhoto=current().avatarPhoto||'',photoRequest=0,photoLoading=0;
  function paintProfiles(){
   const p=current();selectedAvatar=p.avatar;selectedPhoto=p.avatarPhoto||'';$('v7name').value=p.name;
@@ -275,7 +309,7 @@ function initUI(){
  };
  refresh();
 }
-const api={current,save:persist,refresh,restore,changeActive,addProfile,updateProfile,removeProfile,initUI,
+const api={current,save:persist,refresh,restore,changeActive,addProfile,updateProfile,removeProfile,addManualTime,initUI,
  dateKey,minutes,weekTotal,notify,applyAvatar};
 window.P7=api;
 initUI();

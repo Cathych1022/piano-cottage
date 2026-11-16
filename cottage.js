@@ -100,7 +100,8 @@
   $('v7monthBack').textContent='‹';$('v7monthBack').setAttribute('aria-label','上一月');
   $('v7monthForward').textContent='›';$('v7monthForward').setAttribute('aria-label','下一月');
   $('v7monthTitle').before(el('span','calendar-icon',icon('calendar')));
-  calendar.append(monthNav,$('v7calendar'),$('v7dayDetail'));
+  const dayActions=el('div','calendar-day-actions');dayActions.append($('v7dayDetail'),$('v7manualButton'));
+  calendar.append(monthNav,$('v7calendar'),dayActions);
   $('v7export').innerHTML=icon('upload')+'导出备份';$('v7importButton').innerHTML=icon('restore')+'恢复备份';
   const backup=board.querySelector('.v7-backup');
   const help=el('p','backup-note','练琴记录保存在此设备，备份让回忆安心留存。');

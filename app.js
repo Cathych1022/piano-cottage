@@ -183,6 +183,7 @@ window.addEventListener('pagehide',()=>{save();screenAwake.suspend();});
 window.addEventListener('pageshow',()=>screenAwake.resume());
 // Prevent time leaking across family members: stop audio before switching or restoring.
 window.PianoSession={
+  refreshStats:updateStats,
   async stopListening(){if(listening||initializing)await stop();else save()},
   async refreshProfile(){
     history=window.P7.current().history;

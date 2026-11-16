@@ -6,6 +6,16 @@
   let language='zh';
   try { if(localStorage.getItem(KEY)==='en')language='en'; } catch {}
   const english={
+    '手动补记':'Add practice time','＋ 补记':'+ Add time','补记密码':'Password','练琴日期':'Practice date',
+    '补记时长（分钟）':'Minutes to add','例如：20':'For example: 20','保存补记':'Save time',
+    '补记时间会加到当天已有记录，计入目标和统计。':'Time is added to the selected day and counts toward goals and statistics.',
+    '密码不正确，请重新输入':'Incorrect password. Please try again.',
+    '练琴者已切换，请重新打开补记':'The player changed. Please reopen Add practice time.',
+    '请选择有效日期，不能晚于今天':'Choose a valid date, no later than today.',
+    '请输入 1–1440 的整数分钟':'Enter a whole number of minutes from 1 to 1440.',
+    '当天累计时间不能超过 24 小时':'A day cannot contain more than 24 hours of practice.',
+    '记录日期已达上限，请先导出备份':'The date limit has been reached. Export a backup first.',
+    '补记已保存，日历和统计已更新':'Practice time saved. Calendar and statistics updated.',
     '钢琴小屋':'Piano Cottage','钢琴小屋 · 自动练琴计时':'Piano Cottage · Practice Timer',
     '小屋设置':'Cottage settings','聆听琴声':'Listen to the piano','界面语言':'Language',
     '开始监听后自动保持屏幕常亮，停止后恢复自动锁屏。':'The screen stays awake while listening. Auto-lock returns when you stop.',

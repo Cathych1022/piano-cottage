@@ -54,3 +54,12 @@ test('screen-awake feedback and retry controls support English',()=>{
   assert.match(t('屏幕常亮已开启，停止监听后恢复自动锁屏。'),/^Screen awake is on/);
   assert.match(t('系统未允许屏幕常亮，请检查低电量模式后重试。'),/Low Power Mode/);
 });
+
+test('manual time labels and validation support English',()=>{
+ const {t}=locale('en');
+ assert.equal(t('手动补记'),'Add practice time');
+ assert.match(t('密码不正确，请重新输入'),/^Incorrect password/);
+ assert.match(t('请输入 1–1440 的整数分钟'),/1 to 1440/);
+ assert.match(t('当天累计时间不能超过 24 小时'),/24 hours/);
+ assert.match(t('补记已保存，日历和统计已更新'),/^Practice time saved/);
+});
