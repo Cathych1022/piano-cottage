@@ -115,6 +115,12 @@
     const b=el('button','',icon(type)+'<span>'+label+'</span>');b.type='button';b.dataset.page=key;b.setAttribute('aria-controls','page-'+key);nav.append(b);
   }
   root.append(nav);
+  const version=document.querySelector('meta[name="piano-cottage-version"]')?.content;
+  if(version){
+    const label=el('small','app-version','v'+version);
+    label.setAttribute('data-no-i18n','');
+    nav.append(label);
+  }
   const titles={practice:['home','钢琴小屋'],weekly:['chart','本周练琴'],mine:['user','我的小屋']};
   function show(page){
     if(!pages[page])page='practice';
